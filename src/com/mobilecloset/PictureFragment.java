@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -39,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,13 +60,15 @@ import org.json.JSONObject;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
-public class PictureFragment extends ParentFragment implements OnClickListener
+public class PictureFragment extends ParentFragment implements OnClickListener,
+    OnItemSelectedListener
 {
   ImageView formPic;
-  TextView formCategory;
+  Spinner spinner;
   TextView formTag;
   String path;
   Button upload;
+  String fCategory;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,7 +77,18 @@ public class PictureFragment extends ParentFragment implements OnClickListener
     super.onCreate(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_picture, container, false);
     formPic = (ImageView) view.findViewById(R.id.formPic);
-    formCategory = (TextView) view.findViewById(R.id.formCategory);
+    spinner = (Spinner) view.findViewById(R.id.formCategory);
+
+    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        this.getActivity(), R.array.categories,
+        android.R.layout.simple_spinner_item);
+    // Specify the layout to use when the list of choices appears
+    adapter
+        .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    // Apply the adapter to the spinner
+    spinner.setAdapter(adapter);
+    spinner.setOnItemSelectedListener(this);
+
     formTag = (TextView) view.findViewById(R.id.formTag);
     upload = (Button) view.findViewById(R.id.upload);
     upload.setOnClickListener(this);
@@ -110,7 +125,7 @@ public class PictureFragment extends ParentFragment implements OnClickListener
 
         FileInputStream fileInputStream = new FileInputStream(picture);
 
-        String categories = new String("|" + formCategory.getText());
+        String categories = new String("|" + fCategory);
         String tags = new String();
         for (String string : formTag.getText().toString().split(" "))
         {
@@ -192,6 +207,18 @@ public class PictureFragment extends ParentFragment implements OnClickListener
       new Upload().execute(path);
       break;
     }
+  }
+
+  public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
+  {
+    // An item was selected. You can retrieve the selected item using
+    // parent.getItemAtPosition(pos)
+    fCategory = spinner.getSelectedItem().toString();
+  }
+
+  public void onNothingSelected(AdapterView<?> parent)
+  {
+    // Another interface callback
   }
 
 }

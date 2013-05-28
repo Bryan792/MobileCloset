@@ -10,6 +10,7 @@
     <string name="Description">Description</string>
     <string name="Tags">Tags</string>
     <string name="addATag">Add a Tag</string>
+    <string name="prompt">Select Category</string>
 
     <string-array name="categories">
         <item>Hats</item>
