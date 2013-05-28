@@ -47,6 +47,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 
 import android.app.ProgressDialog;
 
@@ -162,29 +163,9 @@ public class ParentActivity extends SherlockFragmentActivity
 
   public void upload(String path)
   {
-
-    File picture = new File(path);
-    try
-    {
-      if (cFlag)
-      {
-        new Upload().execute(path);
-//        noCompression(picture, path);
-      }
-      else
-      {
-        // bm is a bitmap, global
-        // we always run out of memory. #wtf
-        // bm = decodeFile(picture);
-        bm = BitmapFactory.decodeFile(path);
-        startUploading();
-      }
-    } catch (Exception ex)
-    {
-      System.err.println("Error: " + ex.getMessage());
-      Log.d("Error", "Error message: " + ex.getMessage());
-    }
-
+    Intent intent = new Intent().putExtra("path", path);
+    intent.setClass(this, PictureActivity.class);
+    startActivity(intent);   
   }
 
   public void getPath(Uri uri)
@@ -485,80 +466,6 @@ public class ParentActivity extends SherlockFragmentActivity
     return Uri.fromFile(getOutputMediaFile(fileType));
   }
 
-  public void noCompression(File picture, String path) throws IOException
-  {
-
-    HttpURLConnection connection = null;
-    DataOutputStream outputStream = null;
-    // DataInputStream inputStream = null;
-
-    String urlServer = "http://bryanching.net/mcloset/handle_upload.php";
-    String lineEnd = "\r\n";
-    String twoHyphens = "--";
-    String boundary = "*****";
-    // EditText tagsField = (EditText) findViewById(R.id.editText1);
-    // String tags;
-    // tags = tagsField.getText().toString();
-    int bytesRead, bytesAvailable, bufferSize;
-    byte[] buffer;
-    int maxBufferSize = 1 * 1024 * 1024;
-
-    FileInputStream fileInputStream = new FileInputStream(picture);
-
-    String tags = new String("|hats");
-    URL url = new URL(urlServer);
-    connection = (HttpURLConnection) url.openConnection();
-    if (connection != null)
-    { // Allow Inputs &Outputs
-      connection.setDoInput(true);
-      connection.setDoOutput(true);
-      connection.setUseCaches(false);
-
-      // Enable POST method connection.setRequestMethod("POST");
-
-      connection.setRequestProperty("Connection", "Keep-Alive");
-      connection.setRequestProperty("Content-Type",
-          "multipart/form-data;boundary=" + boundary);
-
-      outputStream = new DataOutputStream(connection.getOutputStream());
-      outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-      Log.d("tags", tags);
-      outputStream
-          .writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
-              + path + tags + "\"" + lineEnd);
-      outputStream.writeBytes(lineEnd);
-
-      bytesAvailable = fileInputStream.available();
-      bufferSize = Math.min(bytesAvailable, maxBufferSize);
-      buffer = new byte[bufferSize];
-
-      // Read file
-      bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-      while (bytesRead > 0)
-      {
-        outputStream.write(buffer, 0, bufferSize);
-        bytesAvailable = fileInputStream.available();
-        bufferSize = Math.min(bytesAvailable, maxBufferSize);
-        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-      }
-
-      outputStream.writeBytes(lineEnd);
-      outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-      // Responses from the server (code and message)
-      int serverResponseCode = connection.getResponseCode();
-      String serverResponseMessage = connection.getResponseMessage();
-
-      Log.d(serverResponseMessage, "Response Code: " + serverResponseCode);
-      Log.d(serverResponseMessage, "Response message: " + serverResponseMessage);
-      fileInputStream.close();
-      outputStream.flush();
-      outputStream.close();
-
-      // throw new Exception("this sucks"); }
-
-    }
-  }
+ 
 
 }
