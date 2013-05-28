@@ -1,4 +1,5 @@
 package com.mobilecloset;
+
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -25,7 +26,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-
 import android.content.Context;
 import android.content.Intent;
 
@@ -35,7 +35,6 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -62,113 +61,138 @@ import android.util.Base64;
 public class ParentActivity extends SherlockFragmentActivity
 {
   /** Request codes for starting new Activities. */
-  //private static final int PICTURE_DOWNLOAD = 1;
+  // private static final int PICTURE_DOWNLOAD = 1;
   private static final int PICTURE_UPLOAD = 2;
   private static final int SELECT_PICTURE = 3;
-  
+
   InputStream is;
   public static final boolean cFlag = true;
 
   private Bitmap bm;
 
-  
   private static File mediaFile = null;
   private String selectedImagePath;
-  
-  public boolean onOptionsItemSelected(MenuItem item) {
+
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
     Intent intent;
-    switch (item.getItemId()) {
-    
-//    case R.id.menu_download:
-//      if (haveInternet(this)) {
-//        downloadPictures();
-//      //intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//      //startActivityForResult(intent,PICTURE_DOWNLOAD);
-//      } else {
-//        displayToast("No internet connectivity");
-//      }
-//      return true;
+    switch (item.getItemId())
+    {
+
+    // case R.id.menu_download:
+    // if (haveInternet(this)) {
+    // downloadPictures();
+    // //intent = new
+    // Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    // //startActivityForResult(intent,PICTURE_DOWNLOAD);
+    // } else {
+    // displayToast("No internet connectivity");
+    // }
+    // return true;
     case R.id.menu_upload:
-      if (haveInternet(this)) {
+      if (haveInternet(this))
+      {
         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         Uri uri = getOutputMediaFileUri(PICTURE_UPLOAD);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent,PICTURE_UPLOAD);
-      } else {
+        startActivityForResult(intent, PICTURE_UPLOAD);
+      }
+      else
+      {
         displayToast("No internet connectivity");
       }
       return true;
     case R.id.menu_select:
-      if (haveInternet(this)) {
+      if (haveInternet(this))
+      {
         intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(
-            Intent.createChooser(intent, "Select Picture"),
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"),
             SELECT_PICTURE);
-      } else {
+      }
+      else
+      {
         displayToast("No internet connectivity");
       }
       return true;
-    
+
     default:
       return super.onOptionsItemSelected(item);
     }
   }
-  
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
     super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode == RESULT_OK) {
-      if (requestCode == SELECT_PICTURE) {
+    if (resultCode == RESULT_OK)
+    {
+      if (requestCode == SELECT_PICTURE)
+      {
         Uri selectedImageUri = data.getData();
         getPath(selectedImageUri);
-        if (haveInternet(this)) {
+        if (haveInternet(this))
+        {
           upload(selectedImagePath);
 
-        } else {
+        }
+        else
+        {
           displayToast("No Internect Connectivity");
         }
 
       }
-      else if (requestCode == PICTURE_UPLOAD) {
-      //data.getDataString();
-        Log.d("path","PATH TO picture IS: "+mediaFile.getAbsolutePath());
-        if (haveInternet(this)) {
+      else if (requestCode == PICTURE_UPLOAD)
+      {
+        // data.getDataString();
+        Log.d("path", "PATH TO picture IS: " + mediaFile.getAbsolutePath());
+        if (haveInternet(this))
+        {
           upload(mediaFile.getAbsolutePath());
 
-        } else {
+        }
+        else
+        {
           displayToast("No Internect Connectivity");
         }
-      
+
       }
     }
   }
-  
-  public void upload(String path) {
+
+  public void upload(String path)
+  {
 
     File picture = new File(path);
-    try {
-      if (cFlag) {
-        noCompression(picture,path);
-      } else {
+    try
+    {
+      if (cFlag)
+      {
+        new Upload().execute(path);
+//        noCompression(picture, path);
+      }
+      else
+      {
         // bm is a bitmap, global
         // we always run out of memory. #wtf
         // bm = decodeFile(picture);
         bm = BitmapFactory.decodeFile(path);
         startUploading();
       }
-    } catch (Exception ex) {
+    } catch (Exception ex)
+    {
       System.err.println("Error: " + ex.getMessage());
       Log.d("Error", "Error message: " + ex.getMessage());
     }
 
   }
-  
-  public void getPath(Uri uri) {
+
+  public void getPath(Uri uri)
+  {
     String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-    Cursor cursor = getContentResolver().query(uri, filePathColumn, null,
-        null, null);
+    Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null,
+        null);
     cursor.moveToFirst();
 
     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -178,11 +202,11 @@ public class ParentActivity extends SherlockFragmentActivity
     Log.d("IMAGE PATH", "filePath: " + selectedImagePath);
   }
 
-  public void displayToast(String message) {
+  public void displayToast(String message)
+  {
     String toastText = message;
 
-    Toast toast = Toast.makeText(this, toastText,
-        Toast.LENGTH_SHORT);
+    Toast toast = Toast.makeText(this, toastText, Toast.LENGTH_SHORT);
     toast.show();
   }
 
@@ -190,8 +214,8 @@ public class ParentActivity extends SherlockFragmentActivity
    * private Bitmap decodeFile(File f) throws IOException { Bitmap b = null;
    * 
    * // Decode image size // final int IMAGE_MAX_SIZE = 1000;
-   * BitmapFactory.Options o = new BitmapFactory.Options();
-   * o.inJustDecodeBounds = true;
+   * BitmapFactory.Options o = new BitmapFactory.Options(); o.inJustDecodeBounds
+   * = true;
    * 
    * FileInputStream fis = new FileInputStream(f);
    * BitmapFactory.decodeStream(fis, null, o); fis.close();
@@ -216,34 +240,41 @@ public class ParentActivity extends SherlockFragmentActivity
    * @param ctx
    * @return
    */
-  public static boolean haveInternet(Context ctx) {
+  public static boolean haveInternet(Context ctx)
+  {
 
     NetworkInfo info = (NetworkInfo) ((ConnectivityManager) ctx
-        .getSystemService(Context.CONNECTIVITY_SERVICE))
-        .getActiveNetworkInfo();
+        .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
 
-    if (info == null) {
-      return false;
-    } else if (!info.isConnected()) {
+    if (info == null)
+    {
       return false;
     }
-    if (info.isRoaming()) {
+    else if (!info.isConnected())
+    {
+      return false;
+    }
+    if (info.isRoaming())
+    {
       return false;
     }
     return true;
   }
 
-  public void startUploading() {
+  public void startUploading()
+  {
 
     new AddTask().execute();
 
   }
 
-  class AddTask extends AsyncTask<Void, Void, Void> {
+  class AddTask extends AsyncTask<Void, Void, Void>
+  {
 
     private ProgressDialog dialog;
 
-    protected void onPreExecute() {
+    protected void onPreExecute()
+    {
 
       dialog = new ProgressDialog(ParentActivity.this);
       dialog.setMessage("Retrieving data ...");
@@ -253,7 +284,8 @@ public class ParentActivity extends SherlockFragmentActivity
 
     }
 
-    protected Void doInBackground(Void... unused) {
+    protected Void doInBackground(Void... unused)
+    {
 
       ByteArrayOutputStream bao = new ByteArrayOutputStream();
       // takes up a lot of memory..I think
@@ -265,7 +297,8 @@ public class ParentActivity extends SherlockFragmentActivity
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
       nameValuePairs.add(new BasicNameValuePair("image", imageString));
       nameValuePairs.add(new BasicNameValuePair("name", "randomThink"));
-      try {
+      try
+      {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(
             "http://sunjaydhama.com/projects/mobileCloset/image_upload.php");
@@ -274,21 +307,112 @@ public class ParentActivity extends SherlockFragmentActivity
         // responsez = convertResponseToString(response);
         HttpEntity entity = response.getEntity();
         is = entity.getContent();
-      } catch (Exception e) {
+      } catch (Exception e)
+      {
         Log.e("log_tag", "Error in http connection " + e.toString());
       }
       return (null);
     }
 
-    protected void onProgressUpdate(Void... unused) {
+    protected void onProgressUpdate(Void... unused)
+    {
       // grid_main.setAdapter(imgadp);
     }
 
-    protected void onPostExecute(Void unused) {
+    protected void onPostExecute(Void unused)
+    {
       Log.d("post execute", "**********Success!!!!********");
       dialog.dismiss();
 
     }
+  }
+
+  class Upload extends AsyncTask<String, Void, Void>
+  {
+
+    protected Void doInBackground(String... unused)
+    {
+      try
+      {
+        String path = unused[0];
+        File picture = new File(path);
+        HttpURLConnection connection = null;
+        DataOutputStream outputStream = null;
+        // DataInputStream inputStream = null;
+
+        String urlServer = "http://bryanching.net/mcloset/handle_upload.php";
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        // EditText tagsField = (EditText) findViewById(R.id.editText1);
+        // String tags;
+        // tags = tagsField.getText().toString();
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024;
+
+        FileInputStream fileInputStream = new FileInputStream(picture);
+
+        String tags = new String("|hats");
+        URL url = new URL(urlServer);
+        connection = (HttpURLConnection) url.openConnection();
+        if (connection != null)
+        { // Allow Inputs &Outputs
+          connection.setDoInput(true);
+          connection.setDoOutput(true);
+          connection.setUseCaches(false);
+
+          // Enable POST method connection.setRequestMethod("POST");
+
+          connection.setRequestProperty("Connection", "Keep-Alive");
+          connection.setRequestProperty("Content-Type",
+              "multipart/form-data;boundary=" + boundary);
+
+          outputStream = new DataOutputStream(connection.getOutputStream());
+          outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+          Log.d("tags", tags);
+          outputStream
+              .writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
+                  + path + tags + "\"" + lineEnd);
+          outputStream.writeBytes(lineEnd);
+
+          bytesAvailable = fileInputStream.available();
+          bufferSize = Math.min(bytesAvailable, maxBufferSize);
+          buffer = new byte[bufferSize];
+
+          // Read file
+          bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+          while (bytesRead > 0)
+          {
+            outputStream.write(buffer, 0, bufferSize);
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+          }
+
+          outputStream.writeBytes(lineEnd);
+          outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+          // Responses from the server (code and message)
+          int serverResponseCode = connection.getResponseCode();
+          String serverResponseMessage = connection.getResponseMessage();
+
+          Log.d(serverResponseMessage, "Response Code: " + serverResponseCode);
+          Log.d(serverResponseMessage, "Response message: "
+              + serverResponseMessage);
+          fileInputStream.close();
+          outputStream.flush();
+          outputStream.close();
+
+        }
+      } catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+      return null;
+    }
+
   }
 
   /*
@@ -300,12 +424,12 @@ public class ParentActivity extends SherlockFragmentActivity
    * // content // length�.. // Toast.makeText(UploadImage.this,
    * "contentLength : " + // contentLength, Toast.LENGTH_LONG).show(); if
    * (contentLength < 0) { } else { byte[] data = new byte[512]; int len = 0;
-   * try { while (-1 != (len = is.read(data))) { buffer.append(new
-   * String(data, 0, len)); // converting // to string // and // appending //
-   * to // stringbuffer�.. } } catch (IOException e) { e.printStackTrace(); }
-   * try { is.close(); // closing the stream�.. } catch (IOException e) {
-   * e.printStackTrace(); } res = buffer.toString(); // converting
-   * stringbuffer to string�..
+   * try { while (-1 != (len = is.read(data))) { buffer.append(new String(data,
+   * 0, len)); // converting // to string // and // appending // to //
+   * stringbuffer�.. } } catch (IOException e) { e.printStackTrace(); } try {
+   * is.close(); // closing the stream�.. } catch (IOException e) {
+   * e.printStackTrace(); } res = buffer.toString(); // converting stringbuffer
+   * to string�..
    * 
    * // Toast.makeText(UploadImage.this, "Result : " + res, //
    * Toast.LENGTH_LONG).show(); // System.out.println("Response => " + //
@@ -315,8 +439,9 @@ public class ParentActivity extends SherlockFragmentActivity
    * 
    * }
    */
-  
-  private static File getOutputMediaFile(int type) {
+
+  private static File getOutputMediaFile(int type)
+  {
 
     File mediaStorageDir;
     mediaStorageDir = new File(
@@ -324,18 +449,20 @@ public class ParentActivity extends SherlockFragmentActivity
             .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
         "MobileCloset");
 
-    if (!mediaStorageDir.exists()) {
+    if (!mediaStorageDir.exists())
+    {
       /*
        * If there isn't one, we have to create it. Call mediaStorageDir's
        * mkdirs() method Check to see if it did NOT create the directory
        * appropriately.
        */
-      if (!mediaStorageDir.mkdirs()) {
+      if (!mediaStorageDir.mkdirs())
+      {
         /*
          * 
-         * If both of these checks fail, send a debug Log message to
-         * Logcat from WalkAbout stating that the directory creation
-         * process was a fail, then return null.
+         * If both of these checks fail, send a debug Log message to Logcat from
+         * WalkAbout stating that the directory creation process was a fail,
+         * then return null.
          */
         Log.d("File", "Directory creation process was a fail");
         return null;
@@ -343,23 +470,23 @@ public class ParentActivity extends SherlockFragmentActivity
     }
     String timestam = null;
     timestam = DateFormat.getDateTimeInstance().format(new Date());
-    timestam = timestam.replaceAll("\\s","");
-    timestam = timestam.replaceAll(":","");
-    
-      mediaFile = new File(mediaStorageDir.getPath() + File.separator
-          + "IMG_" + timestam + ".jpg");
-    
+    timestam = timestam.replaceAll("\\s", "");
+    timestam = timestam.replaceAll(":", "");
+
+    mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"
+        + timestam + ".jpg");
 
     return mediaFile;
   }
 
-
-  private static Uri getOutputMediaFileUri(int fileType) {
+  private static Uri getOutputMediaFileUri(int fileType)
+  {
 
     return Uri.fromFile(getOutputMediaFile(fileType));
   }
-  
-  public void noCompression(File picture, String path) throws IOException {
+
+  public void noCompression(File picture, String path) throws IOException
+  {
 
     HttpURLConnection connection = null;
     DataOutputStream outputStream = null;
@@ -369,9 +496,9 @@ public class ParentActivity extends SherlockFragmentActivity
     String lineEnd = "\r\n";
     String twoHyphens = "--";
     String boundary = "*****";
-    //EditText tagsField = (EditText) findViewById(R.id.editText1);
-    //String tags;
-    //tags = tagsField.getText().toString();
+    // EditText tagsField = (EditText) findViewById(R.id.editText1);
+    // String tags;
+    // tags = tagsField.getText().toString();
     int bytesRead, bytesAvailable, bufferSize;
     byte[] buffer;
     int maxBufferSize = 1 * 1024 * 1024;
@@ -381,7 +508,8 @@ public class ParentActivity extends SherlockFragmentActivity
     String tags = new String("|hats");
     URL url = new URL(urlServer);
     connection = (HttpURLConnection) url.openConnection();
-    if (connection != null) { // Allow Inputs &Outputs
+    if (connection != null)
+    { // Allow Inputs &Outputs
       connection.setDoInput(true);
       connection.setDoOutput(true);
       connection.setUseCaches(false);
@@ -394,9 +522,10 @@ public class ParentActivity extends SherlockFragmentActivity
 
       outputStream = new DataOutputStream(connection.getOutputStream());
       outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-      Log.d("tags",tags);
+      Log.d("tags", tags);
       outputStream
-          .writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + path + tags + "\"" + lineEnd);    
+          .writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
+              + path + tags + "\"" + lineEnd);
       outputStream.writeBytes(lineEnd);
 
       bytesAvailable = fileInputStream.available();
@@ -406,7 +535,8 @@ public class ParentActivity extends SherlockFragmentActivity
       // Read file
       bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
-      while (bytesRead > 0) {
+      while (bytesRead > 0)
+      {
         outputStream.write(buffer, 0, bufferSize);
         bytesAvailable = fileInputStream.available();
         bufferSize = Math.min(bytesAvailable, maxBufferSize);
@@ -414,16 +544,14 @@ public class ParentActivity extends SherlockFragmentActivity
       }
 
       outputStream.writeBytes(lineEnd);
-      outputStream.writeBytes(twoHyphens + boundary + twoHyphens
-          + lineEnd);
+      outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
       // Responses from the server (code and message)
       int serverResponseCode = connection.getResponseCode();
       String serverResponseMessage = connection.getResponseMessage();
 
       Log.d(serverResponseMessage, "Response Code: " + serverResponseCode);
-      Log.d(serverResponseMessage, "Response message: "
-          + serverResponseMessage);
+      Log.d(serverResponseMessage, "Response message: " + serverResponseMessage);
       fileInputStream.close();
       outputStream.flush();
       outputStream.close();
