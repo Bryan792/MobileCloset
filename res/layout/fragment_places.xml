@@ -19,11 +19,11 @@
         android:layout_height="wrap_content"
         android:text="My Outfits" />
 
-    <Button
-        android:id="@+id/news"
+    <!--  <Button
+        android:id="@+id/newItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add New" />
+        android:text="Add New" />-->
 
     <Button
         android:id="@+id/search"

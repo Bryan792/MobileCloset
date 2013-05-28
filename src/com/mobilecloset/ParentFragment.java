@@ -9,21 +9,18 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-public class ParentFragment extends SherlockFragment
-{
+public class ParentFragment extends SherlockFragment {
 
-  protected ImageLoader imageLoader = ImageLoader.getInstance();
-  protected DisplayImageOptions options;
+	protected ImageLoader imageLoader = ImageLoader.getInstance();
+	protected DisplayImageOptions options;
 
-  public void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
-    options = new DisplayImageOptions.Builder()
-        .resetViewBeforeLoading().cacheOnDisc()
-        .imageScaleType(ImageScaleType.EXACTLY)
-        .bitmapConfig(Bitmap.Config.RGB_565)
-        .displayer(new FadeInBitmapDisplayer(300)).build();
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		options = new DisplayImageOptions.Builder().resetViewBeforeLoading()
+				.cacheOnDisc().imageScaleType(ImageScaleType.EXACTLY)
+				.bitmapConfig(Bitmap.Config.RGB_565)
+				.displayer(new FadeInBitmapDisplayer(300)).build();
 
-  }
+	}
 
 }

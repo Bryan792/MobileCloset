@@ -7,7 +7,9 @@
     <ImageView
         android:id="@+id/formPic"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp"
+        android:contentDescription = "@string/Picture"
+         />
 
     <Spinner
         android:id="@+id/formCategory"
@@ -20,12 +22,12 @@
         android:id="@+id/formTag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="#Tags" />
+        android:hint="@string/Tags" />
 
     <Button
         android:id="@+id/upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload" />
+        android:text="@string/Upload" />
 
 </LinearLayout>

@@ -15,29 +15,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
-
-public class ClosetFragment extends ParentFragment implements OnClickListener {
+public class OutfitsFragment extends ParentFragment {
+	// JSON Node names
+	public static final String TAG_SUCCESS = "success";
+	private static String url_outfits = "http://bryanching.net/mcloset/outfits.php";
 	ArrayList<String> tags;
 	LinearLayout m_vwClosetLayout;
 	ViewPager pager;
@@ -46,47 +46,14 @@ public class ClosetFragment extends ParentFragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		View view = inflater
-				.inflate(R.layout.fragment_closet, container, false);
-		// m_vwClosetLayout = (LinearLayout)
-		// view.findViewById(R.id.closetLayout);
+
+		View view = inflater.inflate(R.layout.gridview, container, false);
 		pager = (ViewPager) view.findViewById(R.id.pager);
-		new ClosetURLs().execute(getActivity().getIntent().getExtras()
-				.getString("tags"));
-		// pager.setAdapter(new ImagePagerAdapter(IMAGES));
-		// return pager;
-		return view;
-	}
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		switch (v.getId()) {
-		case R.id.closet:
-			Intent intent = new Intent();
-			intent.setClass(getActivity(), ClosetActivity.class);
-			startActivity(intent);
-			break;
-		}
-	}
-
-	public class UninterceptableViewPager extends ViewPager {
-		public UninterceptableViewPager(Context context) {
-			super(context);
-		}
-
-		public UninterceptableViewPager(Context context, AttributeSet attrs) {
-			super(context, attrs);
-		}
-
-		public boolean onInterceptTouchEvent(MotionEvent ev) {
-			// Tell our parent to stop intercepting our events!
-			boolean ret = super.onInterceptTouchEvent(ev);
-			if (ret) {
-				getParent().requestDisallowInterceptTouchEvent(true);
-			}
-			return ret;
-		}
+		GridView gridView;
+		gridView = (GridView) view.findViewById(R.id.gridview);
+		// gridView.setAdapter(new ImageAdapter(view.getContext()));
+		return gridView;
+		// return view;
 	}
 
 	private class ImagePagerAdapter extends
@@ -151,7 +118,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener {
 								message = "Unknown error";
 								break;
 							}
-							Toast.makeText(ClosetFragment.this.getActivity(),
+							Toast.makeText(OutfitsFragment.this.getActivity(),
 									message, Toast.LENGTH_SHORT).show();
 
 							spinner.setVisibility(View.GONE);
@@ -197,8 +164,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener {
 
 			try {
 				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost(
-						"http://bryanching.net/mcloset/get_urls.php");
+				HttpPost httppost = new HttpPost(url_outfits);
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 				HttpResponse response = httpclient.execute(httppost);
 				HttpEntity entity = response.getEntity();
@@ -215,11 +181,12 @@ public class ClosetFragment extends ParentFragment implements OnClickListener {
 		}
 
 		protected void onPostExecute(String jo) {
+
 			JSONArray ja = null;
 			JSONObject jaz = null;
 			try {
 				jaz = new JSONObject(jo);
-				int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
+				int success = jaz.getInt("success");
 				if (success == 1) {
 					ja = new JSONObject(jo).getJSONArray("urls");
 					String[] images = new String[ja.length()];
@@ -228,6 +195,14 @@ public class ClosetFragment extends ParentFragment implements OnClickListener {
 								.replace("\\/", "\"");
 					}
 					pager.setAdapter(new ImagePagerAdapter(images));
+				} else {
+
+					Toast toast = Toast.makeText(getActivity(), "Not Found",
+							Toast.LENGTH_SHORT);
+					toast.show();
+					Intent intent = new Intent();
+					intent.setClass(getActivity(), PlacesActivity.class);
+					startActivity(intent);
 				}
 
 			} catch (JSONException e1) {
@@ -240,4 +215,5 @@ public class ClosetFragment extends ParentFragment implements OnClickListener {
 
 		}
 	}
+
 }
