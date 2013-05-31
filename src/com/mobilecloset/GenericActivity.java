@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 
-public class PlacesActivity extends ParentActivity
+public class GenericActivity extends ParentActivity
 {
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -17,10 +17,32 @@ public class PlacesActivity extends ParentActivity
     final ActionBar bar = getSupportActionBar();
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
+    Object fragment = null;
+    try
+    {
+      fragment = Class.forName(getIntent().getStringExtra("fragment"))
+          .newInstance();
+      // Toast.makeText(this, "Worked", Toast.LENGTH_SHORT).show();
+    }
+    catch (InstantiationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (IllegalAccessException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (ClassNotFoundException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     FragmentTransaction fragmentTransaction = getSupportFragmentManager()
         .beginTransaction();
-    fragmentTransaction.add(android.R.id.content,
-        (Fragment) new PlacesFragment());
+    fragmentTransaction.add(android.R.id.content, (Fragment) fragment);
     fragmentTransaction.commit();
   }
 

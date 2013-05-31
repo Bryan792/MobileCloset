@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="1dip" >
+    android:padding="1dip"
+    android:orientation="vertical" >
 
     <ImageView
         android:id="@+id/image"
@@ -12,6 +13,12 @@
         android:adjustViewBounds="true"
         android:contentDescription="Desc" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="TAG" />
+
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="wrap_content"
@@ -19,4 +26,4 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-</FrameLayout>
+</LinearLayout>

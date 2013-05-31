@@ -15,9 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -34,186 +31,219 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class OutfitsFragment extends ParentFragment {
-	// JSON Node names
-	public static final String TAG_SUCCESS = "success";
-	private static String url_outfits = "http://bryanching.net/mcloset/outfits.php";
-	ArrayList<String> tags;
-	LinearLayout m_vwClosetLayout;
-	ViewPager pager;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+public class OutfitsFragment extends ParentFragment
+{
+  // JSON Node names
+  public static final String TAG_SUCCESS = "success";
+  private static String url_outfits = "http://bryanching.net/mcloset/outfits.php";
+  ArrayList<String> tags;
+  LinearLayout m_vwClosetLayout;
+  ViewPager pager;
 
-		View view = inflater.inflate(R.layout.gridview, container, false);
-		pager = (ViewPager) view.findViewById(R.id.pager);
-		GridView gridView;
-		gridView = (GridView) view.findViewById(R.id.gridview);
-		// gridView.setAdapter(new ImageAdapter(view.getContext()));
-		return gridView;
-		// return view;
-	}
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState)
+  {
+    super.onCreate(savedInstanceState);
 
-	private class ImagePagerAdapter extends
-			android.support.v4.view.PagerAdapter {
+    View view = inflater.inflate(R.layout.gridview, container, false);
+    pager = (ViewPager) view.findViewById(R.id.pager);
+    GridView gridView;
+    gridView = (GridView) view.findViewById(R.id.gridview);
+    // gridView.setAdapter(new ImageAdapter(view.getContext()));
+    return gridView;
+    // return view;
+  }
 
-		private String[] images;
-		private LayoutInflater inflater;
+  private class ImagePagerAdapter extends android.support.v4.view.PagerAdapter
+  {
 
-		ImagePagerAdapter(String[] images) {
-			this.images = images;
-			inflater = getActivity().getLayoutInflater();
-		}
+    private String[] images;
+    private LayoutInflater inflater;
 
-		@Override
-		public void destroyItem(ViewGroup container, int position, Object object) {
-			((ViewPager) container).removeView((View) object);
-		}
+    ImagePagerAdapter(String[] images)
+    {
+      this.images = images;
+      inflater = getActivity().getLayoutInflater();
+    }
 
-		@Override
-		public void finishUpdate(View container) {
-		}
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object)
+    {
+      ((ViewPager) container).removeView((View) object);
+    }
 
-		@Override
-		public int getCount() {
-			return images.length;
-		}
+    @Override
+    public void finishUpdate(View container)
+    {
+    }
 
-		@Override
-		public Object instantiateItem(ViewGroup view, int position) {
-			View imageLayout = inflater.inflate(R.layout.item_pager_image,
-					view, false);
-			ImageView imageView = (ImageView) imageLayout
-					.findViewById(R.id.image);
-			final ProgressBar spinner = (ProgressBar) imageLayout
-					.findViewById(R.id.loading);
+    @Override
+    public int getCount()
+    {
+      return images.length;
+    }
 
-			imageLoader.displayImage(images[position], imageView, options,
-					new SimpleImageLoadingListener() {
-						@Override
-						public void onLoadingStarted(String imageUri, View view) {
-							spinner.setVisibility(View.VISIBLE);
-						}
+    @Override
+    public Object instantiateItem(ViewGroup view, int position)
+    {
+      View imageLayout = inflater.inflate(R.layout.item_pager_image, view,
+          false);
+      ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
+      final ProgressBar spinner = (ProgressBar) imageLayout
+          .findViewById(R.id.loading);
 
-						@Override
-						public void onLoadingFailed(String imageUri, View view,
-								FailReason failReason) {
-							String message = null;
-							switch (failReason.getType()) {
-							case IO_ERROR:
-								message = "Input/Output error";
-								break;
-							case DECODING_ERROR:
-								message = "Image can't be decoded";
-								break;
-							case NETWORK_DENIED:
-								message = "Downloads are denied";
-								break;
-							case OUT_OF_MEMORY:
-								message = "Out Of Memory error";
-								break;
-							case UNKNOWN:
-								message = "Unknown error";
-								break;
-							}
-							Toast.makeText(OutfitsFragment.this.getActivity(),
-									message, Toast.LENGTH_SHORT).show();
+      imageLoader.displayImage(images[position], imageView, options,
+          new SimpleImageLoadingListener()
+          {
+            @Override
+            public void onLoadingStarted(String imageUri, View view)
+            {
+              spinner.setVisibility(View.VISIBLE);
+            }
 
-							spinner.setVisibility(View.GONE);
-						}
+            @Override
+            public void onLoadingFailed(String imageUri, View view,
+                FailReason failReason)
+            {
+              String message = null;
+              switch (failReason.getType())
+              {
+              case IO_ERROR:
+                message = "Input/Output error";
+                break;
+              case DECODING_ERROR:
+                message = "Image can't be decoded";
+                break;
+              case NETWORK_DENIED:
+                message = "Downloads are denied";
+                break;
+              case OUT_OF_MEMORY:
+                message = "Out Of Memory error";
+                break;
+              case UNKNOWN:
+                message = "Unknown error";
+                break;
+              }
+              Toast.makeText(OutfitsFragment.this.getActivity(), message,
+                  Toast.LENGTH_SHORT).show();
 
-						@Override
-						public void onLoadingComplete(String imageUri,
-								View view, Bitmap loadedImage) {
-							spinner.setVisibility(View.GONE);
-						}
-					});
+              spinner.setVisibility(View.GONE);
+            }
 
-			((ViewPager) view).addView(imageLayout, 0);
-			return imageLayout;
-		}
+            @Override
+            public void onLoadingComplete(String imageUri, View view,
+                Bitmap loadedImage)
+            {
+              spinner.setVisibility(View.GONE);
+            }
+          });
 
-		public boolean isViewFromObject(View view, Object object) {
-			return view.equals(object);
-		}
+      ((ViewPager) view).addView(imageLayout, 0);
+      return imageLayout;
+    }
 
-		@Override
-		public void restoreState(Parcelable state, ClassLoader loader) {
-		}
+    public boolean isViewFromObject(View view, Object object)
+    {
+      return view.equals(object);
+    }
 
-		@Override
-		public Parcelable saveState() {
-			return null;
-		}
+    @Override
+    public void restoreState(Parcelable state, ClassLoader loader)
+    {
+    }
 
-		@Override
-		public void startUpdate(View container) {
-		}
-	}
+    @Override
+    public Parcelable saveState()
+    {
+      return null;
+    }
 
-	public class ClosetURLs extends AsyncTask<String, Void, String> {
-		// changing String to JSONObject
-		public String doInBackground(String... path) {
-			String output = null;
-			ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
-					1);
-			nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
-			// nameValuePairs.add(new BasicNameValuePair("id",path[1]));
+    @Override
+    public void startUpdate(View container)
+    {
+    }
+  }
 
-			try {
-				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost(url_outfits);
-				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				HttpResponse response = httpclient.execute(httppost);
-				HttpEntity entity = response.getEntity();
-				// print response
-				output = EntityUtils.toString(entity);
-				Log.i("GET RESPONSE—-", output);
-				Log.e("log_tag ******", "good connection");
-			} catch (Exception e) {
-				Log.e("log_tag ******",
-						"Error in http connection " + e.toString());
-			}
+  public class ClosetURLs extends AsyncTask<String, Void, String>
+  {
+    // changing String to JSONObject
+    public String doInBackground(String... path)
+    {
+      String output = null;
+      ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+      nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
+      // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
-			return output;
-		}
+      try
+      {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(url_outfits);
+        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        HttpResponse response = httpclient.execute(httppost);
+        HttpEntity entity = response.getEntity();
+        // print response
+        output = EntityUtils.toString(entity);
+        Log.i("GET RESPONSE—-", output);
+        Log.e("log_tag ******", "good connection");
+      }
+      catch (Exception e)
+      {
+        Log.e("log_tag ******", "Error in http connection " + e.toString());
+      }
 
-		protected void onPostExecute(String jo) {
+      return output;
+    }
 
-			JSONArray ja = null;
-			JSONObject jaz = null;
-			try {
-				jaz = new JSONObject(jo);
-				int success = jaz.getInt("success");
-				if (success == 1) {
-					ja = new JSONObject(jo).getJSONArray("urls");
-					String[] images = new String[ja.length()];
-					for (int i = 0; i < ja.length(); i++) {
-						images[i] = ja.getJSONObject(i).getString("urls")
-								.replace("\\/", "\"");
-					}
-					pager.setAdapter(new ImagePagerAdapter(images));
-				} else {
+    protected void onPostExecute(String jo)
+    {
 
-					Toast toast = Toast.makeText(getActivity(), "Not Found",
-							Toast.LENGTH_SHORT);
-					toast.show();
-					Intent intent = new Intent();
-					intent.setClass(getActivity(), PlacesActivity.class);
-					startActivity(intent);
-				}
+      JSONArray ja = null;
+      JSONObject jaz = null;
+      try
+      {
+        jaz = new JSONObject(jo);
+        int success = jaz.getInt("success");
+        if (success == 1)
+        {
+          ja = new JSONObject(jo).getJSONArray("urls");
+          String[] images = new String[ja.length()];
+          for (int i = 0; i < ja.length(); i++)
+          {
+            images[i] = ja.getJSONObject(i).getString("urls")
+                .replace("\\/", "\"");
+          }
+          pager.setAdapter(new ImagePagerAdapter(images));
+        }
+        else
+        {
 
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+          Toast toast = Toast.makeText(getActivity(), "Not Found",
+              Toast.LENGTH_SHORT);
+          toast.show();
+          Intent intent = new Intent();
+          // intent.setClass(getActivity(),
+          // GenericActivity.class).putExtra("fragment",
+          // PlacesActivity.class.getName());
+          startActivity(intent);
+        }
 
-		}
-	}
+      }
+      catch (JSONException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      catch (Exception e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+
+    }
+  }
 
 }
