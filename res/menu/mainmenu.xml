@@ -3,6 +3,7 @@
 
     <item
         android:id="@+id/menu_upload"
+        android:icon="@drawable/ic_menu_photo"
         android:showAsAction="ifRoom"
         android:title="@string/menuTitle_takePicture">
     </item>
