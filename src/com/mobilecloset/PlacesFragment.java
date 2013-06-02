@@ -1,14 +1,7 @@
 package com.mobilecloset;
 
-import java.security.MessageDigest;
-
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.Signature;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +20,7 @@ public class PlacesFragment extends ParentFragment implements OnClickListener
 {
   ViewGroup m_vwcontainer;
   LayoutInflater m_vwinflater;
-  public static String id;
+  public static String id = "default";
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -145,6 +138,7 @@ public class PlacesFragment extends ParentFragment implements OnClickListener
     else if (state.isClosed())
     {
       Log.i(TAG, "Logged out...");
+      id = "default";
     }
   }
 

@@ -128,14 +128,14 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     pager = (ViewPager) view.findViewById(R.id.pager);
     pager.setOnPageChangeListener(new OnPageChangeListener()
     {
-      
+
       @Override
       public void onPageSelected(int arg0)
       {
         // TODO Auto-generated method stub
-        
+
       }
-      
+
       @Override
       public void onPageScrolled(int arg0, float arg1, int arg2)
       {
@@ -144,14 +144,14 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
         {
           mActionMode.finish();
         }
-        mActionMode=null;
+        mActionMode = null;
       }
-      
+
       @Override
       public void onPageScrollStateChanged(int arg0)
       {
         // TODO Auto-generated method stub
-        
+
       }
     });
     new ClosetURLs().execute(getActivity().getIntent().getExtras()
@@ -378,6 +378,8 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
       String output = null;
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
       nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
+      nameValuePairs.add(new BasicNameValuePair("name", PlacesFragment.id));
+
       // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
       try
