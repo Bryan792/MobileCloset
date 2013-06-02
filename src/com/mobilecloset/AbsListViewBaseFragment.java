@@ -11,7 +11,7 @@ import com.nostra13.universalimageloader.core.assist.PauseOnScrollListener;
  * 
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
  */
-public class AbsListViewBaseActivity extends BaseActivity
+public class AbsListViewBaseFragment extends ParentFragment
 {
 
   protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";

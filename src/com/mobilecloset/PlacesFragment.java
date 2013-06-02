@@ -10,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.facebook.*;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -91,7 +95,8 @@ public class PlacesFragment extends ParentFragment implements OnClickListener
       // setContentView(R.layout.);
       Toast.makeText(getActivity(), "In Development", Toast.LENGTH_SHORT)
           .show();
-      intent.setClass(getActivity(), OutfitsActivity.class);
+      intent.setClass(getActivity(), GenericActivity.class).putExtra(
+          "fragment", OutfitsFragment.class.getName());
       startActivity(intent);
 
       break;

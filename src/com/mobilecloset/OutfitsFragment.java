@@ -19,152 +19,93 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+//import com.mobilecloset.ClosetFragment.ImagePagerAdapter;
+//import com.nostra13.example.universalimageloader.R;
 
-public class OutfitsFragment extends ParentFragment
+public class OutfitsFragment extends AbsListViewBaseFragment
 {
-  // JSON Node names
-  public static final String TAG_SUCCESS = "success";
-  private static String url_outfits = "http://bryanching.net/mcloset/outfits.php";
-  ArrayList<String> tags;
-  LinearLayout m_vwClosetLayout;
-  ViewPager pager;
+  ArrayList<Outfit> outfits;
+  String[] imageUrls;
+
+  DisplayImageOptions options;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    View view = inflater.inflate(R.layout.ac_image_grid, container, false);
+    // Bundle bundle = getIntent().getExtras();
+    // imageUrls = bundle.getStringArray(Extra.IMAGES);
 
-    View view = inflater.inflate(R.layout.gridview, container, false);
-    pager = (ViewPager) view.findViewById(R.id.pager);
-    GridView gridView;
-    gridView = (GridView) view.findViewById(R.id.gridview);
-    // gridView.setAdapter(new ImageAdapter(view.getContext()));
-    return gridView;
-    // return view;
+    options = new DisplayImageOptions.Builder()
+        .showStubImage(R.drawable.ic_stub)
+        .showImageForEmptyUri(R.drawable.ic_empty)
+        .showImageOnFail(R.drawable.ic_error).cacheInMemory().cacheOnDisc()
+        .bitmapConfig(Bitmap.Config.RGB_565).build();
+
+    new ClosetURLs().execute("shoes");
+    return view;
   }
 
-  private class ImagePagerAdapter extends android.support.v4.view.PagerAdapter
+  private void startImagePagerActivity(int position)
   {
+    Intent intent = new Intent(getActivity(), GenericActivity.class).putExtra(
+        "fragment", OutfitFragment.class.getName());
+    intent.putExtra("outfit", outfits.get(position));
+    // intent.putExtra(Extra.IMAGE_POSITION, position);
+    startActivity(intent);
+  }
 
-    private String[] images;
-    private LayoutInflater inflater;
-
-    ImagePagerAdapter(String[] images)
-    {
-      this.images = images;
-      inflater = getActivity().getLayoutInflater();
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object)
-    {
-      ((ViewPager) container).removeView((View) object);
-    }
-
-    @Override
-    public void finishUpdate(View container)
-    {
-    }
-
+  public class ImageAdapter extends BaseAdapter
+  {
     @Override
     public int getCount()
     {
-      return images.length;
+      return outfits.size();
     }
 
     @Override
-    public Object instantiateItem(ViewGroup view, int position)
-    {
-      View imageLayout = inflater.inflate(R.layout.item_pager_image, view,
-          false);
-      ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
-      final ProgressBar spinner = (ProgressBar) imageLayout
-          .findViewById(R.id.loading);
-
-      imageLoader.displayImage(images[position], imageView, options,
-          new SimpleImageLoadingListener()
-          {
-            @Override
-            public void onLoadingStarted(String imageUri, View view)
-            {
-              spinner.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onLoadingFailed(String imageUri, View view,
-                FailReason failReason)
-            {
-              String message = null;
-              switch (failReason.getType())
-              {
-              case IO_ERROR:
-                message = "Input/Output error";
-                break;
-              case DECODING_ERROR:
-                message = "Image can't be decoded";
-                break;
-              case NETWORK_DENIED:
-                message = "Downloads are denied";
-                break;
-              case OUT_OF_MEMORY:
-                message = "Out Of Memory error";
-                break;
-              case UNKNOWN:
-                message = "Unknown error";
-                break;
-              }
-              Toast.makeText(OutfitsFragment.this.getActivity(), message,
-                  Toast.LENGTH_SHORT).show();
-
-              spinner.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onLoadingComplete(String imageUri, View view,
-                Bitmap loadedImage)
-            {
-              spinner.setVisibility(View.GONE);
-            }
-          });
-
-      ((ViewPager) view).addView(imageLayout, 0);
-      return imageLayout;
-    }
-
-    public boolean isViewFromObject(View view, Object object)
-    {
-      return view.equals(object);
-    }
-
-    @Override
-    public void restoreState(Parcelable state, ClassLoader loader)
-    {
-    }
-
-    @Override
-    public Parcelable saveState()
+    public Object getItem(int position)
     {
       return null;
     }
 
     @Override
-    public void startUpdate(View container)
+    public long getItemId(int position)
     {
+      return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
+      final ImageView imageView;
+      if (convertView == null)
+      {
+        imageView = (ImageView) getActivity().getLayoutInflater().inflate(
+            R.layout.item_grid_image, parent, false);
+      }
+      else
+      {
+        imageView = (ImageView) convertView;
+      }
+
+      imageLoader.displayImage(outfits.get(position).clothing.get(0).url,
+          imageView, options);
+
+      return imageView;
     }
   }
 
@@ -176,14 +117,13 @@ public class OutfitsFragment extends ParentFragment
       String output = null;
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
       nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
-      nameValuePairs.add(new BasicNameValuePair("name", PlacesFragment.id));
-
       // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
       try
       {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(url_outfits);
+        HttpPost httppost = new HttpPost(
+            "http://bryanching.net/mcloset/outfit.php");
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         HttpResponse response = httpclient.execute(httppost);
         HttpEntity entity = response.getEntity();
@@ -202,36 +142,49 @@ public class OutfitsFragment extends ParentFragment
 
     protected void onPostExecute(String jo)
     {
-
       JSONArray ja = null;
+      JSONArray out = null;
+      JSONObject out2 = null;
       JSONObject jaz = null;
       try
       {
-        jaz = new JSONObject(jo);
-        int success = jaz.getInt("success");
-        if (success == 1)
+        // jaz = new JSONObject(jo);
+        // int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
+        // if (success == 1)
+        // {
+        out = new JSONArray(jo);
+        // String[] images = new String[ja.length()];
+        outfits = new ArrayList<Outfit>();
+        for (int k = 0; k < out.length(); k++)
         {
-          ja = new JSONObject(jo).getJSONArray("urls");
-          String[] images = new String[ja.length()];
+          out2 = out.getJSONObject(k);
+          ja = out2.getJSONArray("clothing");
+          ArrayList<Clothing> temp = new ArrayList<Clothing>();
           for (int i = 0; i < ja.length(); i++)
           {
-            images[i] = ja.getJSONObject(i).getString("urls")
-                .replace("\\/", "\"");
+            JSONObject jobj = ja.getJSONObject(i);
+            JSONArray jtags = jobj.getJSONArray("tag");
+            ArrayList<String> tags = new ArrayList<String>(jtags.length());
+            for (int j = 0; j < jtags.length(); j++)
+            {
+              tags.add(jtags.getString(j));
+            }
+            temp.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
+                tags));
           }
-          pager.setAdapter(new ImagePagerAdapter(images));
+          outfits.add(new Outfit(out2.getString("outfitName"), temp));
         }
-        else
+        listView = (GridView) getView().findViewById(R.id.gridview);
+        ((GridView) listView).setAdapter(new ImageAdapter());
+        listView.setOnItemClickListener(new OnItemClickListener()
         {
-
-          Toast toast = Toast.makeText(getActivity(), "Not Found",
-              Toast.LENGTH_SHORT);
-          toast.show();
-          Intent intent = new Intent();
-          // intent.setClass(getActivity(),
-          // GenericActivity.class).putExtra("fragment",
-          // PlacesActivity.class.getName());
-          startActivity(intent);
-        }
+          @Override
+          public void onItemClick(AdapterView<?> parent, View view,
+              int position, long id)
+          {
+            startImagePagerActivity(position);
+          }
+        });
 
       }
       catch (JSONException e1)

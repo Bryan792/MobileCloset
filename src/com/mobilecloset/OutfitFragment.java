@@ -2,29 +2,14 @@ package com.mobilecloset;
 
 import java.util.ArrayList;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,7 +31,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
-public class ClosetFragment extends ParentFragment implements OnClickListener
+public class OutfitFragment extends ParentFragment implements OnClickListener
 {
 
   int selectedPosition;
@@ -95,8 +80,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
 
       }
     });
-    new ClosetURLs().execute(getActivity().getIntent().getExtras()
-        .getString("tags"));
+
     // pager.setAdapter(new ImagePagerAdapter(IMAGES));
     // return pager;
 
@@ -140,6 +124,10 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
 
     };
 
+    Outfit outfit = getActivity().getIntent().getParcelableExtra("outfit");
+    clothing = outfit.clothing;
+    pager.setAdapter(new ClothingPagerAdapter(clothing));
+
     return view;
 
   }
@@ -153,7 +141,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     case R.id.closet:
       Intent intent = new Intent();
       intent.setClass(getActivity(), GenericActivity.class).putExtra(
-          "fragment", ClosetFragment.class.getName());
+          "fragment", OutfitFragment.class.getName());
       startActivity(intent);
       break;
     }
@@ -275,7 +263,8 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
                 message = "Unknown error";
                 break;
               }
-              Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+              Toast.makeText(OutfitFragment.this.getActivity(), message,
+                  Toast.LENGTH_SHORT).show();
 
               spinner.setVisibility(View.GONE);
             }
@@ -314,82 +303,4 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     }
   }
 
-  public class ClosetURLs extends AsyncTask<String, Void, String>
-  {
-    // changing String to JSONObject
-    public String doInBackground(String... path)
-    {
-      String output = null;
-      ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-      nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
-      nameValuePairs.add(new BasicNameValuePair("name", PlacesFragment.id));
-
-      // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
-
-      try
-      {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(
-            "http://bryanching.net/mcloset/geturls2.php");
-        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-        HttpResponse response = httpclient.execute(httppost);
-        HttpEntity entity = response.getEntity();
-        // print response
-        output = EntityUtils.toString(entity);
-        Log.i("GET RESPONSE—-", output);
-        Log.e("log_tag ******", "good connection");
-      }
-      catch (Exception e)
-      {
-        Log.e("log_tag ******", "Error in http connection " + e.toString());
-      }
-
-      return output;
-    }
-
-    protected void onPostExecute(String jo)
-    {
-      JSONArray ja = null;
-      JSONObject jaz = null;
-      try
-      {
-        // jaz = new JSONObject(jo);
-        // int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
-        // if (success == 1)
-        // {
-        ja = new JSONArray(jo);
-        // String[] images = new String[ja.length()];
-        clothing = new ArrayList<Clothing>(ja.length());
-
-        for (int i = 0; i < ja.length(); i++)
-        {
-          JSONObject jobj = ja.getJSONObject(i);
-          JSONArray jtags = jobj.getJSONArray("tag");
-          ArrayList<String> tags = new ArrayList<String>(jtags.length());
-          for (int j = 0; j < jtags.length(); j++)
-          {
-            tags.add(jtags.getString(j));
-          }
-          clothing.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
-              tags));
-
-          // ja.getJSONObject(i).getString("url");
-          // }
-        }
-        pager.setAdapter(new ClothingPagerAdapter(clothing));
-
-      }
-      catch (JSONException e1)
-      {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-      }
-      catch (Exception e1)
-      {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-      }
-
-    }
-  }
 }

@@ -50,7 +50,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.mobilecloset.OutfitsActivity"
+            android:name="com.mobilecloset.OutfitsFragment"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>

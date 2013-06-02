@@ -13,16 +13,18 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-public class Clothing
+public class Clothing implements Parcelable
 {
 
   int id;
   String url;
-  String[] tag;
+  ArrayList<String> tag;
 
-  public Clothing(int id, String url, String[] tag)
+  public Clothing(int id, String url, ArrayList<String> tag)
   {
     super();
     this.id = id;
@@ -70,6 +72,41 @@ public class Clothing
     {
 
     }
+  }
+
+  @Override
+  public int describeContents()
+  {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags)
+  {
+    dest.writeInt(id);
+    dest.writeString(url);
+    dest.writeList(tag);
+  }
+
+  public static final Parcelable.Creator<Clothing> CREATOR = new Parcelable.Creator<Clothing>()
+  {
+    public Clothing createFromParcel(Parcel in)
+    {
+      return new Clothing(in);
+    }
+
+    public Clothing[] newArray(int size)
+    {
+      return new Clothing[size];
+    }
+  };
+
+  public Clothing(Parcel in)
+  {
+    super();
+    this.id = in.readInt();
+    this.url = in.readString();
+    this.tag = in.readArrayList(String.class.getClassLoader());
   }
 
 }
