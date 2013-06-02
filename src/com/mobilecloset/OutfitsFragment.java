@@ -146,6 +146,7 @@ public class OutfitsFragment extends AbsListViewBaseFragment
       JSONArray out = null;
       JSONObject out2 = null;
       JSONObject jaz = null;
+      
       try
       {
         // jaz = new JSONObject(jo);
