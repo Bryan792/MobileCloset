@@ -34,7 +34,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 public class OutfitsActivity extends AbsListViewBaseActivity
 {
-
+  ArrayList<Outfit> outfits;
   String[] imageUrls;
 
   DisplayImageOptions options;
@@ -158,7 +158,7 @@ public class OutfitsActivity extends AbsListViewBaseActivity
     @Override
     public int getCount()
     {
-      return imageUrls.length;
+      return outfits.size();
     }
 
     @Override
@@ -187,7 +187,7 @@ public class OutfitsActivity extends AbsListViewBaseActivity
         imageView = (ImageView) convertView;
       }
 
-      imageLoader.displayImage(imageUrls[position], imageView, options);
+      imageLoader.displayImage(outfits.get(position).clothing.get(0).url, imageView, options);
 
       return imageView;
     }
@@ -207,7 +207,7 @@ public class OutfitsActivity extends AbsListViewBaseActivity
       {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(
-            "http://bryanching.net/mcloset/get_urls.php");
+            "http://bryanching.net/mcloset/outfit.php");
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         HttpResponse response = httpclient.execute(httppost);
         HttpEntity entity = response.getEntity();
@@ -227,34 +227,48 @@ public class OutfitsActivity extends AbsListViewBaseActivity
     protected void onPostExecute(String jo)
     {
       JSONArray ja = null;
+      JSONArray out = null;
+      JSONObject out2 = null;
       JSONObject jaz = null;
       try
       {
-        jaz = new JSONObject(jo);
-        int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
-        if (success == 1)
+        // jaz = new JSONObject(jo);
+        // int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
+        // if (success == 1)
+        // {
+        out = new JSONArray(jo);
+        // String[] images = new String[ja.length()];
+        outfits = new ArrayList<Outfit>();
+        for (int k = 0; k < out.length(); k++)
         {
-          ja = new JSONObject(jo).getJSONArray("urls");
-          imageUrls = new String[ja.length()];
+          out2 = out.getJSONObject(k);
+          ja = out2.getJSONArray("clothing");
+          ArrayList<Clothing> temp = new ArrayList<Clothing>();
           for (int i = 0; i < ja.length(); i++)
           {
-            imageUrls[i] = ja.getJSONObject(i).getString("urls")
-                .replace("\\/", "\"");
-          }
-          // pager.setAdapter(new ImagePagerAdapter(images));
-
-          listView = (GridView) findViewById(R.id.gridview);
-          ((GridView) listView).setAdapter(new ImageAdapter());
-          listView.setOnItemClickListener(new OnItemClickListener()
-          {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                int position, long id)
+            JSONObject jobj = ja.getJSONObject(i);
+            JSONArray jtags = jobj.getJSONArray("tag");
+            String[] tags = new String[jtags.length()];
+            for (int j = 0; j < jtags.length(); j++)
             {
-              startImagePagerActivity(position);
+              tags[j] = jtags.getString(j);
             }
-          });
+            temp.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
+                tags));
+          }
+          outfits.add(new Outfit(out2.getString("outfitName"),temp));
         }
+        listView = (GridView) findViewById(R.id.gridview);
+        ((GridView) listView).setAdapter(new ImageAdapter());
+        listView.setOnItemClickListener(new OnItemClickListener()
+        {
+          @Override
+          public void onItemClick(AdapterView<?> parent, View view,
+              int position, long id)
+          {
+            startImagePagerActivity(position);
+          }
+        });
 
       }
       catch (JSONException e1)

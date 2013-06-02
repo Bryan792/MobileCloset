@@ -176,6 +176,8 @@ public class OutfitsFragment extends ParentFragment
       String output = null;
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
       nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
+      nameValuePairs.add(new BasicNameValuePair("name", PlacesFragment.id));
+
       // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
       try
