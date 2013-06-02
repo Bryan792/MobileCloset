@@ -22,6 +22,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -48,18 +50,73 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
 {
   public class Clothing
   {
+
+    int id;
     String url;
-    String id;
     String[] tag;
+
+    public Clothing(int id, String url, String[] tag)
+    {
+      super();
+      this.id = id;
+      this.url = url;
+      this.tag = tag;
+    }
+
+    public void delete()
+    {
+      new deleteClothing().execute("" + this.id);
+    }
+
+    public class deleteClothing extends AsyncTask<String, Void, String>
+    {
+      // changing String to JSONObject
+      public String doInBackground(String... path)
+      {
+        String output = null;
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+            1);
+        nameValuePairs.add(new BasicNameValuePair("id", path[0]));
+        // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
+
+        try
+        {
+          HttpClient httpclient = new DefaultHttpClient();
+          HttpPost httppost = new HttpPost(
+              "http://bryanching.net/mcloset/delete.php");
+          httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+          HttpResponse response = httpclient.execute(httppost);
+          HttpEntity entity = response.getEntity();
+          // print response
+          output = EntityUtils.toString(entity);
+          Log.i("GET RESPONSE—-", "output: " + output);
+          Log.e("log_tag ******", "good connection");
+        }
+        catch (Exception e)
+        {
+          Log.e("log_tag ******", "Error in http connection " + e.toString());
+        }
+
+        return output;
+      }
+
+      protected void onPostExecute(String jo)
+      {
+
+      }
+    }
+
   }
-  
-  ArrayList<String> tags;
+
+  int selectedPosition;
+  Clothing[] clothing;
+  // ArrayList<String> tags;
   LinearLayout m_vwClosetLayout;
   ViewPager pager;
 
   private Callback mActionModeCallback;
   private ActionMode mActionMode;
-  
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState)
@@ -69,11 +126,39 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     // m_vwClosetLayout = (LinearLayout)
     // view.findViewById(R.id.closetLayout);
     pager = (ViewPager) view.findViewById(R.id.pager);
+    pager.setOnPageChangeListener(new OnPageChangeListener()
+    {
+      
+      @Override
+      public void onPageSelected(int arg0)
+      {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public void onPageScrolled(int arg0, float arg1, int arg2)
+      {
+        // TODO Auto-generated method stub
+        if (mActionMode != null)
+        {
+          mActionMode.finish();
+        }
+        mActionMode=null;
+      }
+      
+      @Override
+      public void onPageScrollStateChanged(int arg0)
+      {
+        // TODO Auto-generated method stub
+        
+      }
+    });
     new ClosetURLs().execute(getActivity().getIntent().getExtras()
         .getString("tags"));
     // pager.setAdapter(new ImagePagerAdapter(IMAGES));
     // return pager;
-    
+
     mActionModeCallback = new Callback()
     {
       public boolean onCreateActionMode(ActionMode mode, Menu menu)
@@ -93,24 +178,29 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
       @Override
       public boolean onActionItemClicked(ActionMode mode, MenuItem item)
       {
-        // TODO Auto-generated method stub
-        return false;
+        switch (item.getItemId())
+        {
+        case R.id.menu_remove:
+          clothing[selectedPosition].delete();
+          return true;
+        case R.id.menu_outfit:
+          return true;
+        default:
+          return false;
+        }
       }
 
       @Override
       public void onDestroyActionMode(ActionMode mode)
       {
         // TODO Auto-generated method stub
-        
+
       }
 
     };
-    
-    
+
     return view;
-    
-    
-    
+
   }
 
   @Override
@@ -152,15 +242,16 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     }
   }
 
-  private class ImagePagerAdapter extends android.support.v4.view.PagerAdapter
+  private class ClothingPagerAdapter extends
+      android.support.v4.view.PagerAdapter
   {
 
-    private String[] images;
+    private Clothing[] clothing;
     private LayoutInflater inflater;
 
-    ImagePagerAdapter(String[] images)
+    ClothingPagerAdapter(Clothing[] clothing)
     {
-      this.images = images;
+      this.clothing = clothing;
       inflater = getActivity().getLayoutInflater();
     }
 
@@ -178,33 +269,36 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     @Override
     public int getCount()
     {
-      return images.length;
+      return clothing.length;
     }
 
     @Override
-    public Object instantiateItem(ViewGroup view, int position)
+    public Object instantiateItem(ViewGroup view, final int position)
     {
       View imageLayout = inflater.inflate(R.layout.item_pager_image, view,
           false);
+      TextView tagView = (TextView) imageLayout.findViewById(R.id.tags);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
       imageView.setOnLongClickListener(new OnLongClickListener()
       {
-        
+
         @Override
         public boolean onLongClick(View v)
         {
+          int selectedPosition = position;
           if (mActionMode != null)
           {
             return false;
           }
-          mActionMode = ((SherlockFragmentActivity) getActivity()).startActionMode(mActionModeCallback);
+          mActionMode = ((SherlockFragmentActivity) getActivity())
+              .startActionMode(mActionModeCallback);
           return true;
         }
       });
-      
-      imageLoader.displayImage(images[position], imageView, options,
+      tagView.setText(clothing[position].tag[0]);
+      imageLoader.displayImage(clothing[position].url, imageView, options,
           new SimpleImageLoadingListener()
           {
             @Override
@@ -290,7 +384,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
       {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(
-            "http://bryanching.net/mcloset/get_urls.php");
+            "http://bryanching.net/mcloset/geturls2.php");
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         HttpResponse response = httpclient.execute(httppost);
         HttpEntity entity = response.getEntity();
@@ -313,19 +407,29 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
       JSONObject jaz = null;
       try
       {
-        jaz = new JSONObject(jo);
-        int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
-        if (success == 1)
+        // jaz = new JSONObject(jo);
+        // int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
+        // if (success == 1)
+        // {
+        ja = new JSONArray(jo);
+        // String[] images = new String[ja.length()];
+        clothing = new Clothing[ja.length()];
+
+        for (int i = 0; i < ja.length(); i++)
         {
-          ja = new JSONObject(jo).getJSONArray("urls");
-          String[] images = new String[ja.length()];
-          for (int i = 0; i < ja.length(); i++)
+          JSONObject jobj = ja.getJSONObject(i);
+          JSONArray jtags = jobj.getJSONArray("tag");
+          String[] tags = new String[jtags.length()];
+          for (int j = 0; j < jtags.length(); j++)
           {
-            images[i] = ja.getJSONObject(i).getString("urls")
-                .replace("\\/", "\"");
+            tags[j] = jtags.getString(j);
           }
-          pager.setAdapter(new ImagePagerAdapter(images));
+          clothing[i] = new Clothing(jobj.getInt("id"), jobj.getString("url"),
+              tags);
+          // ja.getJSONObject(i).getString("url");
+          // }
         }
+        pager.setAdapter(new ClothingPagerAdapter(clothing));
 
       }
       catch (JSONException e1)

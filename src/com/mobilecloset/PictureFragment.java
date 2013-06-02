@@ -87,6 +87,7 @@ public class PictureFragment extends ParentFragment implements OnClickListener,
         FileInputStream fileInputStream = new FileInputStream(picture);
 
         String categories = new String("|" + fCategory);
+        String id = new String("|" + PlacesFragment.id);
         String tags = new String();
         for (String string : formTag.getText().toString().split(" "))
         {
@@ -111,7 +112,7 @@ public class PictureFragment extends ParentFragment implements OnClickListener,
           Log.d("tags", tags);
           outputStream
               .writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
-                  + path + categories + tags + "\"" + lineEnd);
+                  + path + categories + id + tags + "\"" + lineEnd);
           outputStream.writeBytes(lineEnd);
 
           bytesAvailable = fileInputStream.available();
