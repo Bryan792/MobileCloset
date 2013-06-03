@@ -87,7 +87,7 @@ public class PictureFragment extends ParentFragment implements OnClickListener,
         FileInputStream fileInputStream = new FileInputStream(picture);
 
         String categories = new String("|" + fCategory);
-        String id = new String("|" + PlacesFragment.id);
+        String id = new String("|" + HomeFragment.id);
         String tags = new String();
         for (String string : formTag.getText().toString().split(" "))
         {

@@ -19,12 +19,16 @@
 
     <style name="MobileClosetTheme" parent="@style/Theme.Sherlock.Light">
         <item name="android:windowBackground">@drawable/background</item>
-        <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
-        <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
+        <item name="android:actionBarStyle">@style/MobileClosetTheme.ActionBarStyle</item>
     </style>
 
-    <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+    <style name="MobileClosetTheme.ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/actionBarYellow</item>
+        <item name="android:titleTextStyle">@style/MobileClosetTheme.ActionBar.TitleTextStyle</item>
+    </style>
+
+    <style name="MobileClosetTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/actionBarBlue</item>
     </style>
 
 </resources>

@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 
-public class PlacesActivity extends ParentActivity
+public class HomeActivity extends ParentActivity
 {
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -19,8 +19,8 @@ public class PlacesActivity extends ParentActivity
 
     FragmentTransaction fragmentTransaction = getSupportFragmentManager()
         .beginTransaction();
-    fragmentTransaction.add(android.R.id.content,
-        (Fragment) new PlacesFragment());
+    fragmentTransaction
+        .add(android.R.id.content, (Fragment) new HomeFragment());
     fragmentTransaction.commit();
   }
 

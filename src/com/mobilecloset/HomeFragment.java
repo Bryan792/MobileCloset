@@ -20,7 +20,7 @@ import com.facebook.widget.LoginButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-public class PlacesFragment extends ParentFragment implements OnClickListener
+public class HomeFragment extends ParentFragment implements OnClickListener
 {
   ViewGroup m_vwcontainer;
   LayoutInflater m_vwinflater;
@@ -60,8 +60,8 @@ public class PlacesFragment extends ParentFragment implements OnClickListener
     // Button m_vwNewButton = (Button) view.findViewById(R.id.newItem);
     // m_vwNewButton.setOnClickListener(this);
 
-//    Button m_vwSearchButton = (Button) view.findViewById(R.id.search);
-//    m_vwSearchButton.setOnClickListener(this);
+    // Button m_vwSearchButton = (Button) view.findViewById(R.id.search);
+    // m_vwSearchButton.setOnClickListener(this);
 
     ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this
         .getActivity().getApplicationContext())
@@ -100,9 +100,10 @@ public class PlacesFragment extends ParentFragment implements OnClickListener
       startActivity(intent);
 
       break;
-//    case R.id.search:
-//      Toast.makeText(getActivity(), "Use ActionBar", Toast.LENGTH_SHORT).show();
-//      break;
+    // case R.id.search:
+    // Toast.makeText(getActivity(), "Use ActionBar",
+    // Toast.LENGTH_SHORT).show();
+    // break;
     }
   }
 

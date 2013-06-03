@@ -219,7 +219,7 @@ public class ResultFragment extends ParentFragment implements OnClickListener
       String output = null;
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
       nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
-      nameValuePairs.add(new BasicNameValuePair("name", PlacesFragment.id));
+      nameValuePairs.add(new BasicNameValuePair("name", HomeFragment.id));
 
       // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
@@ -271,7 +271,7 @@ public class ResultFragment extends ParentFragment implements OnClickListener
           toast.show();
           Intent intent = new Intent();
           intent.setClass(getActivity(), GenericActivity.class).putExtra(
-              "fragment", PlacesFragment.class.getName());
+              "fragment", HomeFragment.class.getName());
           startActivity(intent);
         }
 

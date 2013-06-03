@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
@@ -22,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.ActionMode.Callback;
@@ -48,6 +50,12 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
       Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+
+    ActionBar abs = getSherlockActivity().getSupportActionBar();
+    abs.setTitle("Outfit");
+    abs.setDisplayHomeAsUpEnabled(true);
+    setHasOptionsMenu(true);
+
     View view = inflater.inflate(R.layout.fragment_closet, container, false);
     // m_vwClosetLayout = (LinearLayout)
     // view.findViewById(R.id.closetLayout);
@@ -130,6 +138,37 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
 
     return view;
 
+  }
+
+  @Override
+  public void onPrepareOptionsMenu(Menu menu)
+  {
+    super.onPrepareOptionsMenu(menu);
+
+    // This does work
+    // MenuItem someMenuItem = menu.findItem(R.id.menu_upload);
+    // someMenuItem.setVisible(false);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    switch (item.getItemId())
+    {
+    case android.R.id.home:
+      // This ID represents the Home or Up button. In the case of this
+      // activity, the Up button is shown. Use NavUtils to allow users
+      // to navigate up one level in the application structure. For
+      // more details, see the Navigation pattern on Android Design:
+      //
+      // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+      //
+      NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
+          GenericActivity.class).putExtra("fragment",
+          OutfitsFragment.class.getName()));
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

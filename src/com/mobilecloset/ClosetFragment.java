@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
@@ -37,6 +38,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.ActionMode.Callback;
@@ -63,6 +65,12 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
       Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+
+    ActionBar abs = getSherlockActivity().getSupportActionBar();
+    abs.setTitle("My Closet");
+    abs.setDisplayHomeAsUpEnabled(true);
+    setHasOptionsMenu(true);
+
     View view = inflater.inflate(R.layout.fragment_closet, container, false);
     // m_vwClosetLayout = (LinearLayout)
     // view.findViewById(R.id.closetLayout);
@@ -142,6 +150,37 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
 
     return view;
 
+  }
+
+  @Override
+  public void onPrepareOptionsMenu(Menu menu)
+  {
+    super.onPrepareOptionsMenu(menu);
+
+    // This does work
+    // MenuItem someMenuItem = menu.findItem(R.id.menu_upload);
+    // someMenuItem.setVisible(false);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    switch (item.getItemId())
+    {
+    case android.R.id.home:
+      // This ID represents the Home or Up button. In the case of this
+      // activity, the Up button is shown. Use NavUtils to allow users
+      // to navigate up one level in the application structure. For
+      // more details, see the Navigation pattern on Android Design:
+      //
+      // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+      //
+      NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
+          GenericActivity.class).putExtra("fragment",
+          CategoryFragment.class.getName()));
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -228,7 +267,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
         @Override
         public boolean onLongClick(View v)
         {
-          int selectedPosition = position;
+          selectedPosition = position;
           if (mActionMode != null)
           {
             return false;
@@ -322,7 +361,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
       String output = null;
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
       nameValuePairs.add(new BasicNameValuePair("tag", path[0]));
-      nameValuePairs.add(new BasicNameValuePair("name", PlacesFragment.id));
+      nameValuePairs.add(new BasicNameValuePair("name", HomeFragment.id));
 
       // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
@@ -350,7 +389,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     protected void onPostExecute(String jo)
     {
       JSONArray ja = null;
-      JSONObject jaz = null;
+//      JSONObject jaz = null;
       try
       {
         // jaz = new JSONObject(jo);

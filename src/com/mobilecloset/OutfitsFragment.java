@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 //import com.mobilecloset.ClosetFragment.ImagePagerAdapter;
 //import com.nostra13.example.universalimageloader.R;
@@ -45,6 +49,12 @@ public class OutfitsFragment extends AbsListViewBaseFragment
       Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+
+    ActionBar abs = getSherlockActivity().getSupportActionBar();
+    abs.setTitle("My Outfits");
+    abs.setDisplayHomeAsUpEnabled(true);
+    setHasOptionsMenu(true);
+
     View view = inflater.inflate(R.layout.ac_image_grid, container, false);
     // Bundle bundle = getIntent().getExtras();
     // imageUrls = bundle.getStringArray(Extra.IMAGES);
@@ -57,6 +67,37 @@ public class OutfitsFragment extends AbsListViewBaseFragment
 
     new ClosetURLs().execute("shoes");
     return view;
+  }
+
+  @Override
+  public void onPrepareOptionsMenu(Menu menu)
+  {
+    super.onPrepareOptionsMenu(menu);
+
+    // This does work
+    // MenuItem someMenuItem = menu.findItem(R.id.menu_upload);
+    // someMenuItem.setVisible(false);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    switch (item.getItemId())
+    {
+    case android.R.id.home:
+      // This ID represents the Home or Up button. In the case of this
+      // activity, the Up button is shown. Use NavUtils to allow users
+      // to navigate up one level in the application structure. For
+      // more details, see the Navigation pattern on Android Design:
+      //
+      // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+      //
+      NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
+          GenericActivity.class).putExtra("fragment",
+          HomeFragment.class.getName()));
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   private void startImagePagerActivity(int position)
@@ -146,7 +187,7 @@ public class OutfitsFragment extends AbsListViewBaseFragment
       JSONArray out = null;
       JSONObject out2 = null;
       JSONObject jaz = null;
-      
+
       try
       {
         // jaz = new JSONObject(jo);
