@@ -261,6 +261,9 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
           false);
       TextView tagView = (TextView) imageLayout.findViewById(R.id.tags);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
+      imageView.setMaxHeight((int)HomeActivity.height);
+      imageView.setMaxWidth((int)HomeActivity.width);
+      
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
       imageView.setOnLongClickListener(new OnLongClickListener()
@@ -269,7 +272,6 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
         @Override
         public boolean onLongClick(View v)
         {
-          int selectedPosition = position;
           if (mActionMode != null)
           {
             return false;

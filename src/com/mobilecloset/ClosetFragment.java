@@ -38,6 +38,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
@@ -47,6 +48,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+
 
 public class ClosetFragment extends ParentFragment implements OnClickListener
 {
@@ -265,6 +267,12 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
           false);
       TextView tagView = (TextView) imageLayout.findViewById(R.id.tags);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
+    
+      
+      imageView.setMaxHeight((int)HomeActivity.height);
+      imageView.setMaxWidth((int)HomeActivity.width);
+      
+      
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
       imageView.setOnLongClickListener(new OnLongClickListener()
@@ -394,10 +402,12 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
 
     protected void onPostExecute(String jo)
     {
-      JSONArray ja = null;
-      // JSONObject jaz = null;
-      try
-      {
+    	
+    	
+    	if (!isCancelled()) {
+    		JSONArray ja = null;
+    		try
+    		{
         // jaz = new JSONObject(jo);
         // int success = jaz.getInt(ResultFragment.TAG_SUCCESS);
         // if (success == 1)
@@ -441,6 +451,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
         e1.printStackTrace();
       }
 
+    }
     }
   }
 }

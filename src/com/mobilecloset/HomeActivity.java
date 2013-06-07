@@ -1,14 +1,19 @@
 package com.mobilecloset;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 
 public class HomeActivity extends ParentActivity
 {
+	public static double height;
+	public static double width;
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
@@ -22,6 +27,7 @@ public class HomeActivity extends ParentActivity
     fragmentTransaction
         .add(android.R.id.content, (Fragment) new HomeFragment());
     fragmentTransaction.commit();
+    setDims();
   }
 
   @Override
@@ -31,4 +37,20 @@ public class HomeActivity extends ParentActivity
     return super.onCreateOptionsMenu(menu);
   }
 
+  
+  public void setDims()
+  {
+
+	    DisplayMetrics metrics = new DisplayMetrics();
+	    ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
+	  
+	    //= getWindowManager().getDefaultDisplay();
+	    int h = metrics.heightPixels; 
+	    //display.getSize(size);
+	    int w = metrics.widthPixels;
+	    
+	    height = h *.70;
+	    width = w *.95;
+	    
+  }
 }

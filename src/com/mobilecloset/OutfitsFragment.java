@@ -28,8 +28,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -243,6 +241,9 @@ public class OutfitsFragment extends AbsListViewBaseFragment implements
           startImagePagerActivity(position);
         }
       });
+      imageView.setMaxHeight((int)HomeActivity.height);
+      imageView.setMaxWidth((int)HomeActivity.width);
+      
       return imageView;
     }
   }
@@ -284,7 +285,7 @@ public class OutfitsFragment extends AbsListViewBaseFragment implements
       JSONArray ja = null;
       JSONArray out = null;
       JSONObject out2 = null;
-      JSONObject jaz = null;
+      //JSONObject jaz = null;
 
       try
       {
