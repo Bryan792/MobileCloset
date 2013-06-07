@@ -60,7 +60,7 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment implements
     super.onCreate(savedInstanceState);
 
     ActionBar abs = getSherlockActivity().getSupportActionBar();
-    abs.setTitle("My Outfits");
+    abs.setTitle("Select Outfit");
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
 
@@ -113,12 +113,14 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment implements
 
   private void startImagePagerActivity(int position)
   {
-    Intent intent = new Intent(getActivity(), GenericActivity.class).putExtra(
-        "fragment", SelectOutfitFragment.class.getName());
-    intent.putExtra("outfit", outfits.get(position));
-    intent.putExtra("clothing", clothing);
-    // intent.putExtra(Extra.IMAGE_POSITION, position);
-    startActivity(intent);
+//    Intent intent = new Intent(getActivity(), GenericActivity.class).putExtra(
+//        "fragment", SelectOutfitFragment.class.getName());
+//    intent.putExtra("outfit", outfits.get(position));
+//    intent.putExtra("clothing", clothing);
+//    // intent.putExtra(Extra.IMAGE_POSITION, position);
+//    startActivity(intent);
+    outfits.get(position).addClothing(clothing);
+    getActivity().finish();
   }
 
   public class ImageAdapter extends BaseAdapter
@@ -155,9 +157,18 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment implements
         imageView = (ImageView) convertView;
       }
 
-      imageLoader.displayImage(outfits.get(position).clothing.get(0).url,
-          imageView, options);
-
+      if (outfits.get(position).clothing.isEmpty())
+      {
+        imageLoader
+            .displayImage(
+                "http://image.shutterstock.com/display_pic_with_logo/1252747/115370923/stock-photo-men-s-outfit-115370923.jpg",
+                imageView, options);
+      }
+      else
+      {
+        imageLoader.displayImage(outfits.get(position).clothing.get(0).url,
+            imageView, options);
+      }
       return imageView;
     }
   }
@@ -223,8 +234,9 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment implements
             {
               tags.add(jtags.getString(j));
             }
-            temp.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
-                tags));
+            if (!jobj.isNull("id"))
+              temp.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
+                  tags));
           }
           outfits.add(new Outfit(out2.getInt("oid"), out2
               .getString("outfitName"), temp));

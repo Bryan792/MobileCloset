@@ -133,7 +133,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
         {
         case R.id.menu_remove:
           clothing.get(selectedPosition).delete();
-          getView().invalidate();
+          pager.getAdapter().notifyDataSetChanged();
           return true;
         case R.id.menu_outfit:
           Intent intent = new Intent();

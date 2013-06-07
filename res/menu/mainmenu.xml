@@ -3,16 +3,15 @@
 
     <item
         android:id="@+id/menu_upload"
-        android:icon="@drawable/ic_menu_photo"
+        android:icon="@drawable/ic_action_camera"
         android:showAsAction="ifRoom"
-        android:title="@string/menuTitle_takePicture"
-        android:visible="false">
+        android:title="@string/menuTitle_takePicture">
     </item>
     <item
         android:id="@+id/menu_select"
+        android:icon="@drawable/ic_action_photo"
         android:showAsAction="ifRoom"
-        android:title="@string/Select"
-        android:visible="false">
+        android:title="@string/Select">
     </item>
 
 </menu>

@@ -3,7 +3,8 @@
 
     <item
         android:id="@+id/menu_remove"
-        android:title="Delete">
+        android:title="Delete"
+        android:icon="@drawable/ic_action_trash">
     </item>
     <item
         android:id="@+id/menu_outfit"

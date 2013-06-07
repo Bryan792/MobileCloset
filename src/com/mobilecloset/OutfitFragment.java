@@ -93,6 +93,8 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
 
     // pager.setAdapter(new ImagePagerAdapter(IMAGES));
     // return pager;
+    final Outfit outfit = getActivity().getIntent()
+        .getParcelableExtra("outfit");
 
     mActionModeCallback = new Callback()
     {
@@ -100,6 +102,7 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
       {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.actionmenu, menu);
+        menu.findItem(R.id.menu_outfit).setVisible(false);
         return true;
       }
 
@@ -116,7 +119,7 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
         switch (item.getItemId())
         {
         case R.id.menu_remove:
-          clothing.get(selectedPosition).delete();
+          outfit.deleteClothing(clothing.get(selectedPosition));
           return true;
         case R.id.menu_outfit:
           Intent intent = new Intent();
@@ -139,7 +142,6 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
 
     };
 
-    Outfit outfit = getActivity().getIntent().getParcelableExtra("outfit");
     clothing = outfit.clothing;
     outfitNameTextView.setText(outfit.name);
     if (clothing.isEmpty())
@@ -261,9 +263,9 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
           false);
       TextView tagView = (TextView) imageLayout.findViewById(R.id.tags);
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
-      imageView.setMaxHeight((int)HomeActivity.height);
-      imageView.setMaxWidth((int)HomeActivity.width);
-      
+      imageView.setMaxHeight((int) HomeActivity.height);
+      imageView.setMaxWidth((int) HomeActivity.width);
+
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
       imageView.setOnLongClickListener(new OnLongClickListener()

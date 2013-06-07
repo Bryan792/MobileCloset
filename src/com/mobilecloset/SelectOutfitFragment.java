@@ -266,22 +266,22 @@ public class SelectOutfitFragment extends ParentFragment implements
       imageView.setMaxHeight((int)HomeActivity.height);
       imageView.setMaxWidth((int)HomeActivity.width);
       
-      imageView.setOnLongClickListener(new OnLongClickListener()
-      {
-
-        @Override
-        public boolean onLongClick(View v)
-        {
-          int selectedPosition = position;
-          if (mActionMode != null)
-          {
-            return false;
-          }
-          mActionMode = ((SherlockFragmentActivity) getActivity())
-              .startActionMode(mActionModeCallback);
-          return true;
-        }
-      });
+//      imageView.setOnLongClickListener(new OnLongClickListener()
+//      {
+//
+//        @Override
+//        public boolean onLongClick(View v)
+//        {
+//          int selectedPosition = position;
+//          if (mActionMode != null)
+//          {
+//            return false;
+//          }
+//          mActionMode = ((SherlockFragmentActivity) getActivity())
+//              .startActionMode(mActionModeCallback);
+//          return true;
+//        }
+//      });
       tagView.setText("");
       for (String tag : clothing.get(position).tag)
       {
