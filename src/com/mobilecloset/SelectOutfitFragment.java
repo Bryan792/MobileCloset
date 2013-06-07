@@ -256,6 +256,10 @@ public class SelectOutfitFragment extends ParentFragment implements
       ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
       final ProgressBar spinner = (ProgressBar) imageLayout
           .findViewById(R.id.loading);
+      //set screen size
+      imageView.setMaxHeight((int)HomeActivity.height);
+      imageView.setMaxWidth((int)HomeActivity.width);
+      
       imageView.setOnLongClickListener(new OnLongClickListener()
       {
 

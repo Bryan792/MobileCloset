@@ -29,13 +29,14 @@
         android:id="@+id/gridview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:columnWidth="100dip"
         android:layout_above="@+id/profile_button2"
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:horizontalSpacing="4dip"
-        android:numColumns="3"
+        android:horizontalSpacing="6dip"
+        android:numColumns="2"
         android:padding="4dip"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="4dip" />
+        android:verticalSpacing="6dip" />
 
 </RelativeLayout>
