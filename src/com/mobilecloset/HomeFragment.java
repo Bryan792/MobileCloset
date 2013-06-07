@@ -49,7 +49,7 @@ public class HomeFragment extends ParentFragment implements OnClickListener
     //
     m_vwcontainer = container;
     m_vwinflater = inflater;
-    View view = inflater.inflate(R.layout.fragment_places, container, false);
+    View view = inflater.inflate(R.layout.fragment_home, container, false);
 
     Button m_vwClosetButton = (Button) view.findViewById(R.id.closet);
     m_vwClosetButton.setOnClickListener(this);

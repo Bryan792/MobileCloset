@@ -31,6 +31,11 @@ public class Outfit implements Parcelable
     this.clothing = clothing;
   }
 
+  public void delete()
+  {
+    new deleteOutfit().execute("" + this.oid);
+  }
+
   @Override
   public int describeContents()
   {
@@ -88,6 +93,44 @@ public class Outfit implements Parcelable
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(
             "http://bryanching.net/mcloset/insert_into_outfit.php");
+        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        HttpResponse response = httpclient.execute(httppost);
+        HttpEntity entity = response.getEntity();
+        // print response
+        output = EntityUtils.toString(entity);
+        Log.i("GET RESPONSE—-", "output: " + output);
+        Log.e("log_tag ******", "good connection");
+      }
+      catch (Exception e)
+      {
+        Log.e("log_tag ******", "Error in http connection " + e.toString());
+      }
+
+      return output;
+    }
+
+    protected void onPostExecute(String jo)
+    {
+
+    }
+  }
+
+  public class deleteOutfit extends AsyncTask<String, Void, String>
+  {
+    // changing String to JSONObject
+    public String doInBackground(String... path)
+    {
+      String output = null;
+      ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+      nameValuePairs.add(new BasicNameValuePair("oid", path[0]));
+
+      // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
+
+      try
+      {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(
+            "http://bryanching.net/mcloset/delete_outfit.php");
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         HttpResponse response = httpclient.execute(httppost);
         HttpEntity entity = response.getEntity();

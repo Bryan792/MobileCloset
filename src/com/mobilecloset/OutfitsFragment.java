@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -23,26 +24,41 @@ import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.ActionMode.Callback;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 //import com.mobilecloset.ClosetFragment.ImagePagerAdapter;
 //import com.nostra13.example.universalimageloader.R;
 
-public class OutfitsFragment extends AbsListViewBaseFragment
+public class OutfitsFragment extends AbsListViewBaseFragment implements
+    OnClickListener
 {
   ArrayList<Outfit> outfits;
   String[] imageUrls;
-
+  EditText outfitName;
   DisplayImageOptions options;
+  Button saveOutfit;
+  int selectedPosition;
+
+  private Callback mActionModeCallback;
+  private ActionMode mActionMode;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +71,10 @@ public class OutfitsFragment extends AbsListViewBaseFragment
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
 
-    View view = inflater.inflate(R.layout.ac_image_grid, container, false);
+    View view = inflater.inflate(R.layout.fragment_outfits, container, false);
+    saveOutfit = (Button) view.findViewById(R.id.saveButton);
+    saveOutfit.setOnClickListener(this);
+    outfitName = (EditText) view.findViewById(R.id.newJokeEditText);
     // Bundle bundle = getIntent().getExtras();
     // imageUrls = bundle.getStringArray(Extra.IMAGES);
 
@@ -64,6 +83,51 @@ public class OutfitsFragment extends AbsListViewBaseFragment
         .showImageForEmptyUri(R.drawable.ic_empty)
         .showImageOnFail(R.drawable.ic_error).cacheInMemory().cacheOnDisc()
         .bitmapConfig(Bitmap.Config.RGB_565).build();
+
+    mActionModeCallback = new Callback()
+    {
+      public boolean onCreateActionMode(ActionMode mode, Menu menu)
+      {
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.actionmenu, menu);
+        return true;
+      }
+
+      @Override
+      public boolean onPrepareActionMode(ActionMode mode, Menu menu)
+      {
+        // TODO Auto-generated method stub
+        return false;
+      }
+
+      @Override
+      public boolean onActionItemClicked(ActionMode mode, MenuItem item)
+      {
+        switch (item.getItemId())
+        {
+        case R.id.menu_remove:
+          outfits.get(selectedPosition).delete();
+          return true;
+        case R.id.menu_outfit:
+          // Intent intent = new Intent();
+          // intent.setClass(getActivity(), GenericActivity.class)
+          // .putExtra("fragment", SelectOutfitsFragment.class.getName())
+          // .putExtra("clothing", clothing.get(selectedPosition));
+          // startActivity(intent);
+          return true;
+        default:
+          return false;
+        }
+      }
+
+      @Override
+      public void onDestroyActionMode(ActionMode mode)
+      {
+        // TODO Auto-generated method stub
+
+      }
+
+    };
 
     new ClosetURLs().execute(HomeFragment.id);
     return view;
@@ -130,7 +194,7 @@ public class OutfitsFragment extends AbsListViewBaseFragment
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
       final ImageView imageView;
       if (convertView == null)
@@ -143,9 +207,44 @@ public class OutfitsFragment extends AbsListViewBaseFragment
         imageView = (ImageView) convertView;
       }
 
-      imageLoader.displayImage(outfits.get(position).clothing.get(0).url,
-          imageView, options);
+      if (outfits.get(position).clothing.isEmpty())
+      {
+        imageLoader
+            .displayImage(
+                "http://image.shutterstock.com/display_pic_with_logo/1252747/115370923/stock-photo-men-s-outfit-115370923.jpg",
+                imageView, options);
+      }
+      else
+      {
+        imageLoader.displayImage(outfits.get(position).clothing.get(0).url,
+            imageView, options);
+      }
+      imageView.setOnLongClickListener(new OnLongClickListener()
+      {
+        @Override
+        public boolean onLongClick(View v)
+        {
+          selectedPosition = position;
+          if (mActionMode != null)
+          {
+            return false;
+          }
+          mActionMode = ((SherlockFragmentActivity) getActivity())
+              .startActionMode(mActionModeCallback);
+          return true;
+        }
+      });
+      imageView.setOnClickListener(new OnClickListener()
+      {
 
+        @Override
+        public void onClick(View v)
+        {
+          // TODO Auto-generated method stub
+          startImagePagerActivity(position);
+
+        }
+      });
       return imageView;
     }
   }
@@ -157,7 +256,8 @@ public class OutfitsFragment extends AbsListViewBaseFragment
     {
       String output = null;
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-      nameValuePairs.add(new BasicNameValuePair("name", path[0]));
+      nameValuePairs.add(new BasicNameValuePair("name", HomeFragment.id));
+
       // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
       try
@@ -211,22 +311,15 @@ public class OutfitsFragment extends AbsListViewBaseFragment
             {
               tags.add(jtags.getString(j));
             }
-            temp.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
-                tags));
+            if (!jobj.isNull("id"))
+              temp.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
+                  tags));
           }
-          outfits.add(new Outfit(out2.getInt("oid"),out2.getString("outfitName"), temp));
+          outfits.add(new Outfit(out2.getInt("oid"), out2
+              .getString("outfitName"), temp));
         }
         listView = (GridView) getView().findViewById(R.id.gridview);
         ((GridView) listView).setAdapter(new ImageAdapter());
-        listView.setOnItemClickListener(new OnItemClickListener()
-        {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view,
-              int position, long id)
-          {
-            startImagePagerActivity(position);
-          }
-        });
 
       }
       catch (JSONException e1)
@@ -243,4 +336,53 @@ public class OutfitsFragment extends AbsListViewBaseFragment
     }
   }
 
+  public class CreateOutfit extends AsyncTask<String, Void, String>
+  {
+    // changing String to JSONObject
+    public String doInBackground(String... path)
+    {
+      String output = null;
+      ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+      nameValuePairs.add(new BasicNameValuePair("name", HomeFragment.id));
+      nameValuePairs.add(new BasicNameValuePair("outfitName", path[0]));
+      nameValuePairs.add(new BasicNameValuePair("id", path[1]));
+      // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
+
+      try
+      {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(
+            "http://bryanching.net/mcloset/insert_outfit.php");
+        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        HttpResponse response = httpclient.execute(httppost);
+        HttpEntity entity = response.getEntity();
+        // print response
+        output = EntityUtils.toString(entity);
+        Log.i("GET RESPONSE—-", output);
+        Log.e("log_tag ******", "good connection");
+      }
+      catch (Exception e)
+      {
+        Log.e("log_tag ******", "Error in http connection " + e.toString());
+      }
+
+      return output;
+    }
+  }
+
+  @Override
+  public void onClick(View v)
+  {
+    switch (v.getId())
+    {
+    case R.id.saveButton:
+      if (!outfitName.getText().toString().isEmpty())
+        new CreateOutfit().execute(outfitName.getText().toString(), "" + 0);
+      InputMethodManager imm = (InputMethodManager) getActivity()
+          .getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(outfitName.getWindowToken(), 0);
+      getActivity().finish();
+      break;
+    }
+  }
 }

@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -23,25 +24,33 @@ import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.mobilecloset.OutfitsFragment.CreateOutfit;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 //import com.mobilecloset.ClosetFragment.ImagePagerAdapter;
 //import com.nostra13.example.universalimageloader.R;
 
-public class SelectOutfitsFragment extends AbsListViewBaseFragment
+public class SelectOutfitsFragment extends AbsListViewBaseFragment implements
+    OnClickListener
 {
   ArrayList<Outfit> outfits;
   String[] imageUrls;
-
+  EditText outfitName;
+  Clothing clothing;
+  Button saveOutfit;
   DisplayImageOptions options;
 
   @Override
@@ -55,17 +64,19 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
 
-    View view = inflater.inflate(R.layout.ac_image_grid, container, false);
+    View view = inflater.inflate(R.layout.fragment_outfits, container, false);
     // Bundle bundle = getIntent().getExtras();
     // imageUrls = bundle.getStringArray(Extra.IMAGES);
-
+    saveOutfit = (Button) view.findViewById(R.id.saveButton);
+    saveOutfit.setOnClickListener(this);
+    outfitName = (EditText) view.findViewById(R.id.newJokeEditText);
     options = new DisplayImageOptions.Builder()
         .showStubImage(R.drawable.ic_stub)
         .showImageForEmptyUri(R.drawable.ic_empty)
         .showImageOnFail(R.drawable.ic_error).cacheInMemory().cacheOnDisc()
         .bitmapConfig(Bitmap.Config.RGB_565).build();
-
-    new ClosetURLs().execute(HomeFragment.id);
+    clothing = getActivity().getIntent().getParcelableExtra("clothing");
+    new ClosetURLs().execute();
     return view;
   }
 
@@ -105,7 +116,7 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment
     Intent intent = new Intent(getActivity(), GenericActivity.class).putExtra(
         "fragment", SelectOutfitFragment.class.getName());
     intent.putExtra("outfit", outfits.get(position));
-    intent.putExtra("clothing", getActivity().getIntent().getParcelableExtra("clothing"));
+    intent.putExtra("clothing", clothing);
     // intent.putExtra(Extra.IMAGE_POSITION, position);
     startActivity(intent);
   }
@@ -158,7 +169,7 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment
     {
       String output = null;
       ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-      nameValuePairs.add(new BasicNameValuePair("name", path[0]));
+      nameValuePairs.add(new BasicNameValuePair("name", HomeFragment.id));
       // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
 
       try
@@ -215,7 +226,8 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment
             temp.add(new Clothing(jobj.getInt("id"), jobj.getString("url"),
                 tags));
           }
-          outfits.add(new Outfit(out2.getInt("oid"),out2.getString("outfitName"), temp));
+          outfits.add(new Outfit(out2.getInt("oid"), out2
+              .getString("outfitName"), temp));
         }
         listView = (GridView) getView().findViewById(R.id.gridview);
         ((GridView) listView).setAdapter(new ImageAdapter());
@@ -241,6 +253,60 @@ public class SelectOutfitsFragment extends AbsListViewBaseFragment
         e1.printStackTrace();
       }
 
+    }
+  }
+
+  public class CreateOutfit extends AsyncTask<String, Void, String>
+  {
+    // changing String to JSONObject
+    public String doInBackground(String... path)
+    {
+      String output = null;
+      ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+      nameValuePairs.add(new BasicNameValuePair("name", HomeFragment.id));
+      nameValuePairs.add(new BasicNameValuePair("outfitName", path[0]));
+      nameValuePairs.add(new BasicNameValuePair("id", path[1]));
+      // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
+
+      try
+      {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(
+            "http://bryanching.net/mcloset/insert_outfit.php");
+        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        HttpResponse response = httpclient.execute(httppost);
+        HttpEntity entity = response.getEntity();
+        // print response
+        output = EntityUtils.toString(entity);
+        Log.i("GET RESPONSE—-", output);
+        Log.e("log_tag ******", "good connection");
+      }
+      catch (Exception e)
+      {
+        Log.e("log_tag ******", "Error in http connection " + e.toString());
+      }
+
+      return output;
+    }
+  }
+
+  @Override
+  public void onClick(View v)
+  {
+    switch (v.getId())
+    {
+    case R.id.saveButton:
+      if (!outfitName.getText().toString().isEmpty())
+      {
+        System.out.println("clicked");
+        new CreateOutfit().execute(outfitName.getText().toString(), ""
+            + clothing.id);
+      }
+      InputMethodManager imm = (InputMethodManager) getActivity()
+          .getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(outfitName.getWindowToken(), 0);
+      getActivity().finish();
+      break;
     }
   }
 
