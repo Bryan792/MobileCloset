@@ -67,7 +67,7 @@ public class ResultFragment extends ParentFragment implements OnClickListener
     super.onCreate(savedInstanceState);
 
     ActionBar abs = getSherlockActivity().getSupportActionBar();
-    abs.setTitle("My Closet");
+    abs.setTitle("Search Results");
     abs.setDisplayHomeAsUpEnabled(true);
     setHasOptionsMenu(true);
 
@@ -105,7 +105,7 @@ public class ResultFragment extends ParentFragment implements OnClickListener
     });
     new ClosetURLs().execute(getActivity().getIntent().getExtras()
         .getString("query"));
-    
+
     // pager.setAdapter(new ImagePagerAdapter(IMAGES));
     // return pager;
 
@@ -181,9 +181,7 @@ public class ResultFragment extends ParentFragment implements OnClickListener
       //
       // http://developer.android.com/design/patterns/navigation.html#up-vs-back
       //
-      NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
-          GenericActivity.class).putExtra("fragment",
-          CategoryFragment.class.getName()));
+      getActivity().finish();
       return true;
     }
     return super.onOptionsItemSelected(item);
@@ -421,8 +419,14 @@ public class ResultFragment extends ParentFragment implements OnClickListener
           // ja.getJSONObject(i).getString("url");
           // }
         }
-        pager.setAdapter(new ClothingPagerAdapter(clothing));
-
+        if (clothing.isEmpty())
+        {
+          getActivity().setContentView(R.layout.fragment_empty);
+        }
+        else
+        {
+          pager.setAdapter(new ClothingPagerAdapter(clothing));
+        }
       }
       catch (JSONException e1)
       {

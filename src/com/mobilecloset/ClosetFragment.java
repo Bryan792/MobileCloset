@@ -131,6 +131,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
         {
         case R.id.menu_remove:
           clothing.get(selectedPosition).delete();
+          getView().invalidate();
           return true;
         case R.id.menu_outfit:
           Intent intent = new Intent();
@@ -420,8 +421,14 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
           // ja.getJSONObject(i).getString("url");
           // }
         }
-        pager.setAdapter(new ClothingPagerAdapter(clothing));
-
+        if (clothing.isEmpty())
+        {
+          getActivity().setContentView(R.layout.fragment_empty);
+        }
+        else
+        {
+          pager.setAdapter(new ClothingPagerAdapter(clothing));
+        }
       }
       catch (JSONException e1)
       {

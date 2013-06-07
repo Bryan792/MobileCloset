@@ -496,14 +496,14 @@ public class ParentActivity extends SherlockFragmentActivity implements
     if (mSuggestionsAdapter == null)
     {
       MatrixCursor cursor = new MatrixCursor(COLUMNS);
-      cursor.addRow(new String[] { "1", "cream" });
-      cursor.addRow(new String[] { "2", "collar" });
-      cursor.addRow(new String[] { "3", "fancy" });
-      cursor.addRow(new String[] { "4", "shirt" });
-      cursor.addRow(new String[] { "5", "dress" });
-      cursor.addRow(new String[] { "6", "skirt" });
-      cursor.addRow(new String[] { "7", "pants" });
-      cursor.addRow(new String[] { "8", "shorts" });
+//      cursor.addRow(new String[] { "1", "cream" });
+//      cursor.addRow(new String[] { "2", "collar" });
+//      cursor.addRow(new String[] { "3", "fancy" });
+//      cursor.addRow(new String[] { "4", "shirt" });
+//      cursor.addRow(new String[] { "5", "dress" });
+//      cursor.addRow(new String[] { "6", "skirt" });
+//      cursor.addRow(new String[] { "7", "pants" });
+//      cursor.addRow(new String[] { "8", "shorts" });
       mSuggestionsAdapter = new SuggestionsAdapter(getSupportActionBar()
           .getThemedContext(), cursor);
     }
@@ -511,7 +511,7 @@ public class ParentActivity extends SherlockFragmentActivity implements
     searchView.setSuggestionsAdapter(mSuggestionsAdapter);
 
     menu.add("Search")
-        .setIcon(R.drawable.ic_menu_search)
+        .setIcon(R.drawable.ic_action_ic_action_search)
         .setActionView(searchView)
         .setShowAsAction(
             MenuItem.SHOW_AS_ACTION_ALWAYS

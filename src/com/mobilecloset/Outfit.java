@@ -35,6 +35,12 @@ public class Outfit implements Parcelable
   {
     new deleteOutfit().execute("" + this.oid);
   }
+  
+  public void deleteClothing(Clothing in)
+  {
+    clothing.remove(in);
+    new deleteFromOutfit().execute("" + this.oid, "" + in.id);
+  }
 
   @Override
   public int describeContents()
@@ -146,10 +152,39 @@ public class Outfit implements Parcelable
 
       return output;
     }
-
-    protected void onPostExecute(String jo)
+  }
+  
+  public class deleteFromOutfit extends AsyncTask<String, Void, String>
+  {
+    // changing String to JSONObject
+    public String doInBackground(String... path)
     {
+      String output = null;
+      ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+      nameValuePairs.add(new BasicNameValuePair("oid", path[0]));
+      nameValuePairs.add(new BasicNameValuePair("id", path[0]));
 
+      // nameValuePairs.add(new BasicNameValuePair("id",path[1]));
+
+      try
+      {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(
+            "http://bryanching.net/mcloset/delete_from_outfit.php");
+        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        HttpResponse response = httpclient.execute(httppost);
+        HttpEntity entity = response.getEntity();
+        // print response
+        output = EntityUtils.toString(entity);
+        Log.i("GET RESPONSE—-", "output: " + output);
+        Log.e("log_tag ******", "good connection");
+      }
+      catch (Exception e)
+      {
+        Log.e("log_tag ******", "Error in http connection " + e.toString());
+      }
+
+      return output;
     }
   }
 

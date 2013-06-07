@@ -224,11 +224,12 @@ public class OutfitsFragment extends AbsListViewBaseFragment implements
         @Override
         public boolean onLongClick(View v)
         {
+          System.out.println("long click");
           selectedPosition = position;
-          if (mActionMode != null)
-          {
-            return false;
-          }
+//          if (mActionMode != null)
+//          {
+//            return false;
+//          }
           mActionMode = ((SherlockFragmentActivity) getActivity())
               .startActionMode(mActionModeCallback);
           return true;
@@ -236,13 +237,10 @@ public class OutfitsFragment extends AbsListViewBaseFragment implements
       });
       imageView.setOnClickListener(new OnClickListener()
       {
-
         @Override
         public void onClick(View v)
         {
-          // TODO Auto-generated method stub
           startImagePagerActivity(position);
-
         }
       });
       return imageView;

@@ -142,8 +142,14 @@ public class SelectOutfitFragment extends ParentFragment implements
     clothing = outfit.clothing;
     clothing.add(selectedClothing);
     outfitNameTextView.setText(outfit.name);
-    pager.setAdapter(new ClothingPagerAdapter(clothing));
-
+    if (clothing.isEmpty())
+    {
+      getActivity().setContentView(R.layout.fragment_empty);
+    }
+    else
+    {
+      pager.setAdapter(new ClothingPagerAdapter(clothing));
+    }
     return view;
 
   }

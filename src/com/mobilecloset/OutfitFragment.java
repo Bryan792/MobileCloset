@@ -142,8 +142,14 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
     Outfit outfit = getActivity().getIntent().getParcelableExtra("outfit");
     clothing = outfit.clothing;
     outfitNameTextView.setText(outfit.name);
-    pager.setAdapter(new ClothingPagerAdapter(clothing));
-
+    if (clothing.isEmpty())
+    {
+      getActivity().setContentView(R.layout.fragment_empty);
+    }
+    else
+    {
+      pager.setAdapter(new ClothingPagerAdapter(clothing));
+    }
     return view;
 
   }

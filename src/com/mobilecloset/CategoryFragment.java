@@ -66,16 +66,16 @@ public class CategoryFragment extends ParentFragment
           long arg3)
       {
         JSONObject jo = m_TagAdapter.getItem(position);
-        try
-        {
-          Toast.makeText(CategoryFragment.this.getActivity(),
-              jo.getString("tags"), Toast.LENGTH_SHORT).show();
-        }
-        catch (JSONException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+//        try
+//        {
+////          Toast.makeText(CategoryFragment.this.getActivity(),
+////              jo.getString("tags"), Toast.LENGTH_SHORT).show();
+//        }
+//        catch (JSONException e)
+//        {
+//          // TODO Auto-generated catch block
+//          e.printStackTrace();
+//        }
         Intent intent = null;
         try
         {

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -20,6 +20,7 @@
     <style name="MobileClosetTheme" parent="@style/Theme.Sherlock.Light">
         <item name="android:windowBackground">@drawable/background</item>
         <item name="android:actionBarStyle">@style/MobileClosetTheme.ActionBarStyle</item>
+<!--         <item name="android:textColor">@color/actionBarBlue</item> -->
     </style>
 
     <style name="MobileClosetTheme.ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
