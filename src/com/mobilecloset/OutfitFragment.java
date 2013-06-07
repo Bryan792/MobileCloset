@@ -59,6 +59,8 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
     View view = inflater.inflate(R.layout.fragment_closet, container, false);
     // m_vwClosetLayout = (LinearLayout)
     // view.findViewById(R.id.closetLayout);
+    TextView outfitNameTextView = (TextView) view
+        .findViewById(R.id.outfitNameText);
     pager = (ViewPager) view.findViewById(R.id.pager);
     pager.setOnPageChangeListener(new OnPageChangeListener()
     {
@@ -117,6 +119,11 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
           clothing.get(selectedPosition).delete();
           return true;
         case R.id.menu_outfit:
+          Intent intent = new Intent();
+          intent.setClass(getActivity(), GenericActivity.class)
+              .putExtra("fragment", SelectOutfitsFragment.class.getName())
+              .putExtra("clothing", clothing.get(selectedPosition));
+          startActivity(intent);
           return true;
         default:
           return false;
@@ -134,6 +141,7 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
 
     Outfit outfit = getActivity().getIntent().getParcelableExtra("outfit");
     clothing = outfit.clothing;
+    outfitNameTextView.setText(outfit.name);
     pager.setAdapter(new ClothingPagerAdapter(clothing));
 
     return view;

@@ -2,24 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="1dip"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="1dip" >
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="wrap_content"
+        android:layout_width="300dip"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:contentDescription="Desc" />
+        android:src="@drawable/background"
+        android:background="@color/pictureBackground"
+        android:contentDescription="Desc"
+        android:paddingBottom="30dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:scaleType="centerInside"
+        />
 
     <TextView
         android:id="@+id/tags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="32sp"
-        android:text="TAG" />
+        android:textSize="32sp" />
 
     <ProgressBar
         android:id="@+id/loading"

@@ -14,10 +14,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +47,12 @@ public class CategoryFragment extends ParentFragment
       Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    
+    ActionBar abs = getSherlockActivity().getSupportActionBar();
+    abs.setTitle("My Categories");
+    abs.setDisplayHomeAsUpEnabled(true);
+    setHasOptionsMenu(true);
+    
     View view = inflater.inflate(R.layout.fragment_category, container, false);
     m_vwTagsList = (ListView) view.findViewById(R.id.tagList);
     tags = new ArrayList<JSONObject>();
@@ -104,6 +114,27 @@ public class CategoryFragment extends ParentFragment
         .toString());
   }
 
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    switch (item.getItemId())
+    {
+    case android.R.id.home:
+      // This ID represents the Home or Up button. In the case of this
+      // activity, the Up button is shown. Use NavUtils to allow users
+      // to navigate up one level in the application structure. For
+      // more details, see the Navigation pattern on Android Design:
+      //
+      // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+      //
+      NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(),
+          GenericActivity.class).putExtra("fragment",
+          HomeFragment.class.getName()));
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+  
   public class TagDLer extends AsyncTask<String, Void, String>
   {
     // changing String to JSONObject

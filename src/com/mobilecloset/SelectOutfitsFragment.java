@@ -37,7 +37,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 //import com.mobilecloset.ClosetFragment.ImagePagerAdapter;
 //import com.nostra13.example.universalimageloader.R;
 
-public class OutfitsFragment extends AbsListViewBaseFragment
+public class SelectOutfitsFragment extends AbsListViewBaseFragment
 {
   ArrayList<Outfit> outfits;
   String[] imageUrls;
@@ -103,8 +103,9 @@ public class OutfitsFragment extends AbsListViewBaseFragment
   private void startImagePagerActivity(int position)
   {
     Intent intent = new Intent(getActivity(), GenericActivity.class).putExtra(
-        "fragment", OutfitFragment.class.getName());
+        "fragment", SelectOutfitFragment.class.getName());
     intent.putExtra("outfit", outfits.get(position));
+    intent.putExtra("clothing", getActivity().getIntent().getParcelableExtra("clothing"));
     // intent.putExtra(Extra.IMAGE_POSITION, position);
     startActivity(intent);
   }

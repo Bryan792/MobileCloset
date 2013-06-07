@@ -511,7 +511,7 @@ public class ParentActivity extends SherlockFragmentActivity implements
     searchView.setSuggestionsAdapter(mSuggestionsAdapter);
 
     menu.add("Search")
-        .setIcon(R.drawable.ic_search)
+        .setIcon(R.drawable.ic_menu_search)
         .setActionView(searchView)
         .setShowAsAction(
             MenuItem.SHOW_AS_ACTION_ALWAYS

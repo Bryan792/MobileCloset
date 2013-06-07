@@ -93,8 +93,8 @@ public class HomeFragment extends ParentFragment implements OnClickListener
     // break;
     case R.id.outfits:
       // setContentView(R.layout.);
-      Toast.makeText(getActivity(), "In Development", Toast.LENGTH_SHORT)
-          .show();
+      // Toast.makeText(getActivity(), "In Development", Toast.LENGTH_SHORT)
+      // .show();
       intent.setClass(getActivity(), GenericActivity.class).putExtra(
           "fragment", OutfitsFragment.class.getName());
       startActivity(intent);

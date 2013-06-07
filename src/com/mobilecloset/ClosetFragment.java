@@ -133,6 +133,11 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
           clothing.get(selectedPosition).delete();
           return true;
         case R.id.menu_outfit:
+          Intent intent = new Intent();
+          intent.setClass(getActivity(), GenericActivity.class)
+              .putExtra("fragment", SelectOutfitsFragment.class.getName())
+              .putExtra("clothing", clothing.get(selectedPosition));
+          startActivity(intent);
           return true;
         default:
           return false;
@@ -389,7 +394,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
     protected void onPostExecute(String jo)
     {
       JSONArray ja = null;
-//      JSONObject jaz = null;
+      // JSONObject jaz = null;
       try
       {
         // jaz = new JSONObject(jo);

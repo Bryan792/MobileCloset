@@ -5,33 +5,14 @@
         android:id="@+id/menu_upload"
         android:icon="@drawable/ic_menu_photo"
         android:showAsAction="ifRoom"
-        android:title="@string/menuTitle_takePicture">
+        android:title="@string/menuTitle_takePicture"
+        android:visible="false">
     </item>
     <item
         android:id="@+id/menu_select"
         android:showAsAction="ifRoom"
-        android:title="@string/Select">
+        android:title="@string/Select"
+        android:visible="false">
     </item>
-    <!--
-    <item
-        android:id="@+id/clear_memory_cache"
-        android:title="@string/Clear">
-    </item>
-    <item
-        android:id="@+id/clear_disc_cache"
-        android:title="@string/Clearc">
-    </item>
-   
-     <item
-        android:id="@+id/item_pause_on_scroll"
-        android:checkable="true"
-        android:title="@string/menu_item_pause_on_scroll"
-        android:visible="false"/>
-    <item
-        android:id="@+id/item_pause_on_fling"
-        android:checkable="true"
-        android:title="@string/menu_item_pause_on_fling"
-        android:visible="false"/>
-    -->
 
 </menu>
