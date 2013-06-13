@@ -49,8 +49,8 @@ public class HomeActivity extends ParentActivity
 	    //display.getSize(size);
 	    int w = metrics.widthPixels;
 	    
-	    height = h *.70;
-	    width = w *.95;
+	    height = h *.75;
+	    width = w *.85;
 	    
   }
 }

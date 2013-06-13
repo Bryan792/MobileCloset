@@ -310,6 +310,7 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
                 FailReason failReason)
             {
               String message = null;
+              
               switch (failReason.getType())
               {
               case IO_ERROR:
@@ -323,6 +324,10 @@ public class ClosetFragment extends ParentFragment implements OnClickListener
                 break;
               case OUT_OF_MEMORY:
                 message = "Out Of Memory error";
+                //message=failReason.toString();
+            	  //message = "Out Of Memory error";
+            	imageLoader.clearMemoryCache();
+                imageLoader.clearDiscCache();
                 break;
               case UNKNOWN:
                 message = "Unknown error";

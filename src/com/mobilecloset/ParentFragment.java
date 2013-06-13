@@ -21,6 +21,7 @@ public class ParentFragment extends SherlockFragment
     options = new DisplayImageOptions.Builder().resetViewBeforeLoading()
         .cacheOnDisc().imageScaleType(ImageScaleType.EXACTLY)
         .bitmapConfig(Bitmap.Config.RGB_565)
+        .resetViewBeforeLoading()
         .displayer(new FadeInBitmapDisplayer(300))
         .imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 

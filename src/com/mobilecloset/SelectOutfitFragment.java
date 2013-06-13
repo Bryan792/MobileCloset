@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.ActionMode.Callback;
 import com.actionbarsherlock.view.Menu;
@@ -238,8 +236,16 @@ public class SelectOutfitFragment extends ParentFragment implements
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object)
-    {
-      ((ViewPager) container).removeView((View) object);
+    { 
+        View view = (View) object;
+        ImageView imageView = (ImageView) view.findViewById(R.id.image);
+        if (imageView != null) {
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            bitmap.recycle();
+            bitmap = null;
+        }
+        ((ViewPager) container).removeView(view);
+        view = null;
     }
 
     @Override
@@ -314,6 +320,8 @@ public class SelectOutfitFragment extends ParentFragment implements
                 break;
               case OUT_OF_MEMORY:
                 message = "Out Of Memory error";
+                imageLoader.clearMemoryCache();
+                imageLoader.clearDiscCache();
                 break;
               case UNKNOWN:
                 message = "Unknown error";

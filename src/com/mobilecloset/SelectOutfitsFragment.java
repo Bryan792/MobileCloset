@@ -38,10 +38,7 @@ import android.widget.ImageView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.mobilecloset.OutfitsFragment.CreateOutfit;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-//import com.mobilecloset.ClosetFragment.ImagePagerAdapter;
-//import com.nostra13.example.universalimageloader.R;
 
 public class SelectOutfitsFragment extends AbsListViewBaseFragment implements
     OnClickListener

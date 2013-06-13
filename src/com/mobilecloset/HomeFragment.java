@@ -1,6 +1,9 @@
 package com.mobilecloset;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,7 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -17,9 +19,11 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+@SuppressLint("NewApi")
 public class HomeFragment extends ParentFragment implements OnClickListener
 {
   ViewGroup m_vwcontainer;
@@ -65,6 +69,13 @@ public class HomeFragment extends ParentFragment implements OnClickListener
 
     ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this
         .getActivity().getApplicationContext())
+    	.memoryCache(new WeakMemoryCache())
+    	 //.memoryCache(new LRULimitedMemoryCache(1024 * 128))
+    	//.memoryCache(new WeakMemoryCache())
+    	.discCacheExtraOptions(480, 600, CompressFormat.JPEG, 65)
+        .discCacheSize(10 * 1024 * 1024)
+        .discCacheFileCount(100)
+        .threadPoolSize(1)
         .threadPriority(Thread.NORM_PRIORITY - 2)
         .denyCacheImageMultipleSizesInMemory().enableLogging().build();
     ImageLoader.getInstance().init(config);

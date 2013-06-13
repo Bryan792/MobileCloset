@@ -18,10 +18,10 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
@@ -241,8 +241,19 @@ public class ResultFragment extends ParentFragment implements OnClickListener
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object)
-    {
-      ((ViewPager) container).removeView((View) object);
+    { 
+        View view = (View) object;
+        ImageView imageView = (ImageView) view.findViewById(R.id.image);
+        if (imageView != null) {
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            if(bitmap!=null)
+            {
+            	bitmap.recycle();
+            	bitmap = null;
+            }
+        }
+        ((ViewPager) container).removeView(view);
+        view = null;
     }
 
     @Override
@@ -303,10 +314,12 @@ public class ResultFragment extends ParentFragment implements OnClickListener
                 FailReason failReason)
             {
               String message = null;
+              try{
               switch (failReason.getType())
               {
               case IO_ERROR:
-                message = "Input/Output error";
+                //message = "Input/Output error";
+            	message= "Image not found";
                 break;
               case DECODING_ERROR:
                 message = "Image can't be decoded";
@@ -316,13 +329,20 @@ public class ResultFragment extends ParentFragment implements OnClickListener
                 break;
               case OUT_OF_MEMORY:
                 message = "Out Of Memory error";
+            	  Log.d("Fail",failReason.toString());
+            	  imageLoader.clearMemoryCache();
+                imageLoader.clearDiscCache();
                 break;
               case UNKNOWN:
                 message = "Unknown error";
                 break;
               }
               Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-
+              }
+              catch(Exception e)
+              {
+            	  e.printStackTrace();
+              }
               spinner.setVisibility(View.GONE);
             }
 

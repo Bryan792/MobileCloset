@@ -14,13 +14,14 @@ public class GenericActivity extends ParentActivity
   {
     super.onCreate(savedInstanceState);
 
-    final ActionBar bar = getSupportActionBar();
-    bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-
+    final ActionBar bar;
+   
     Object fragment = null;
     try
     {
-      fragment = Class.forName(getIntent().getStringExtra("fragment"))
+    	bar= getSupportActionBar();
+    	bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+    	fragment = Class.forName(getIntent().getStringExtra("fragment"))
           .newInstance();
       // Toast.makeText(this, "Worked", Toast.LENGTH_SHORT).show();
     }

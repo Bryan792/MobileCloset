@@ -101,7 +101,8 @@ public class Clothing implements Parcelable
     }
   };
 
-  public Clothing(Parcel in)
+  @SuppressWarnings("unchecked")
+public Clothing(Parcel in)
   {
     super();
     this.id = in.readInt();

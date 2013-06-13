@@ -11,6 +11,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.drawable.BitmapDrawable;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -242,7 +244,24 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
     @Override
     public void destroyItem(ViewGroup container, int position, Object object)
     {
-      ((ViewPager) container).removeView((View) object);
+      //((ViewPager) container).removeView((View) object);
+          //Log.d("DESTROY", "destroying view at position " + position);
+          //imageLoader.clearMemoryCache();
+         // imageLoader.clearDiscCache();
+          
+          
+          View view = (View) object;
+          ImageView imageView = (ImageView) view.findViewById(R.id.image);
+          if (imageView != null) {
+              Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+              if(bitmap!=null)
+              {
+            	  bitmap.recycle();
+            	  bitmap = null;
+              }
+          }
+          ((ViewPager) container).removeView(view);
+          view = null;
     }
 
     @Override
@@ -302,10 +321,14 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
                 FailReason failReason)
             {
               String message = null;
+              imageLoader.clearMemoryCache();
+              imageLoader.clearDiscCache();
+              try{
               switch (failReason.getType())
               {
               case IO_ERROR:
-                message = "Input/Output error";
+                //message = "Input/Output error";
+            	message= "Image not found";
                 break;
               case DECODING_ERROR:
                 message = "Image can't be decoded";
@@ -315,14 +338,19 @@ public class OutfitFragment extends ParentFragment implements OnClickListener
                 break;
               case OUT_OF_MEMORY:
                 message = "Out Of Memory error";
-                break;
+            		Log.d("Fail",failReason.toString());
+            	  break;
               case UNKNOWN:
                 message = "Unknown error";
                 break;
               }
               Toast.makeText(OutfitFragment.this.getActivity(), message,
                   Toast.LENGTH_SHORT).show();
-
+              }catch(Exception e)
+              {
+            	  Log.d("Crash","We crashed");
+            	  e.printStackTrace();
+              }
               spinner.setVisibility(View.GONE);
             }
 
